@@ -10,6 +10,37 @@ export function useChat() {
     const ollamaUrl = ref('http://localhost:11434');
     const models = ref<string[]>([]);
     const selectedModel = ref('');
+    const uploadedFiles = ref<string[]>([]);
+
+    // 上传文件
+    const uploadImage = async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            loading.value = true;
+
+            const response = await axios.post('/api/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            const result = response.data;
+            if (result && result.filename) {
+                uploadedFiles.value.push(result.filename);
+            }
+        } catch (error) {
+            console.error('上传失败', error);
+        } finally {
+            loading.value = false;
+        }
+    };
+
+// 删除标签
+    const removeFile = (name: string) => {
+        uploadedFiles.value = uploadedFiles.value.filter(f => f !== name);
+    };
 
     const fetchModels = async () => {
         try {
@@ -87,7 +118,18 @@ export function useChat() {
         }
     };
 
+    const handleSend = async () => {
+        if (!input.value.trim() && uploadedFiles.value.length === 0) return;
+
+        const fileNote = uploadedFiles.value.map(name => `[图片](${name})`).join('\n');
+        input.value += (fileNote ? `\n${fileNote}` : '');
+        await sendMessage();
+
+        uploadedFiles.value = []; // 清空标签
+    };
+
     return {
+        uploadedFiles,
         input,
         loading,
         messages,
@@ -96,5 +138,8 @@ export function useChat() {
         selectedModel,
         fetchModels,
         sendMessage,
+        uploadImage,
+        removeFile,
+        handleSend,
     };
 }

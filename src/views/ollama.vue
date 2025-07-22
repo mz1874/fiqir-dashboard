@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import {useChat} from "@/hooks/useChats";
 import axios from 'axios';
 
@@ -11,6 +11,10 @@ const {
   models,
   selectedModel,
   fetchModels,
+  handleSend,
+  uploadImage,
+  removeFile,
+  uploadedFiles,
   sendMessage,
 } = useChat();
 
@@ -32,31 +36,6 @@ const handlePaste = (event: ClipboardEvent) => {
   }
 };
 
-const uploadImage = async (file: File) => {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    loading.value = true;
-
-    const response = await axios.post('/api/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    const result = response.data;
-
-    if (result && result.filename) {
-      // 插入图片文件名到输入框
-      input.value += ` ${result.filename} `;
-    }
-  } catch (error) {
-    console.error('上传失败', error);
-  } finally {
-    loading.value = false;
-  }
-};
 </script>
 
 <template>
@@ -102,6 +81,20 @@ const uploadImage = async (file: File) => {
         </a-list-item>
       </template>
     </a-list>
+    <br>
+    <!-- 上传的图片文件标签 -->
+    <div v-if="uploadedFiles.length" style="margin-bottom: 10px;">
+      <a-tag
+          v-for="(filename, index) in uploadedFiles"
+          :key="filename"
+          closable
+          @close="removeFile(filename)"
+          style="margin-bottom: 6px; margin-right: 6px;"
+      >
+        {{ filename }}
+      </a-tag>
+    </div>
+
 
     <!-- 输入框 + 按钮 -->
     <div style="margin-top: 20px; display: flex; gap: 10px;">
@@ -109,11 +102,11 @@ const uploadImage = async (file: File) => {
       <a-input
           v-model:value="input"
           placeholder="输入消息..."
-          @keyup.enter="sendMessage"
+          @keyup.enter="handleSend"
           @paste="handlePaste"
           :disabled="loading"
       />
-      <a-button type="primary" @click="sendMessage" :loading="loading">发送</a-button>
+      <a-button type="primary" @click="handleSend" :loading="loading">发送</a-button>
     </div>
   </div>
 </template>
