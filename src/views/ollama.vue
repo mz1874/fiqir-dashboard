@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import {useChat} from "@/hooks/useChats";
+import axios from 'axios';
 
 const {
   input,
@@ -17,6 +18,45 @@ onMounted(() => {
   fetchModels();
 });
 
+const handlePaste = (event: ClipboardEvent) => {
+  const items = event.clipboardData?.items;
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) {
+        uploadImage(file);
+      }
+    }
+  }
+};
+
+const uploadImage = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    loading.value = true;
+
+    const response = await axios.post('/api/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    const result = response.data;
+
+    if (result && result.filename) {
+      // 插入图片文件名到输入框
+      input.value += ` ${result.filename} `;
+    }
+  } catch (error) {
+    console.error('上传失败', error);
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -65,10 +105,12 @@ onMounted(() => {
 
     <!-- 输入框 + 按钮 -->
     <div style="margin-top: 20px; display: flex; gap: 10px;">
+
       <a-input
           v-model:value="input"
           placeholder="输入消息..."
           @keyup.enter="sendMessage"
+          @paste="handlePaste"
           :disabled="loading"
       />
       <a-button type="primary" @click="sendMessage" :loading="loading">发送</a-button>

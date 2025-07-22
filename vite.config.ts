@@ -18,6 +18,20 @@ export default defineConfig({
             dts: true,
         }),
     ],
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+                // rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+            '/chat': {
+                target: 'http://localhost:11434',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/chat/, ''),
+            },
+        },
+    },
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
