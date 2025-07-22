@@ -128,6 +128,31 @@ export function useChat() {
         uploadedFiles.value = []; // 清空标签
     };
 
+    function handleDrop(event: DragEvent) {
+        const files = event.dataTransfer?.files;
+        if (files && files.length) {
+            for (const file of files) {
+                console.log('Dropped file:', file);
+                uploadImage(file);
+            }
+        }
+    }
+
+
+    const handlePaste = (event: ClipboardEvent) => {
+        const items = event.clipboardData?.items;
+        if (!items) return;
+
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                const file = item.getAsFile();
+                if (file) {
+                    uploadImage(file);
+                }
+            }
+        }
+    };
+
     return {
         uploadedFiles,
         input,
@@ -141,5 +166,7 @@ export function useChat() {
         uploadImage,
         removeFile,
         handleSend,
+        handleDrop,
+        handlePaste,
     };
 }

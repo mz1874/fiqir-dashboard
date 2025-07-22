@@ -12,29 +12,16 @@ const {
   selectedModel,
   fetchModels,
   handleSend,
-  uploadImage,
   removeFile,
   uploadedFiles,
-  sendMessage,
+  handlePaste,
+  handleDrop,
 } = useChat();
 
 onMounted(() => {
   fetchModels();
 });
 
-const handlePaste = (event: ClipboardEvent) => {
-  const items = event.clipboardData?.items;
-  if (!items) return;
-
-  for (const item of items) {
-    if (item.type.startsWith('image/')) {
-      const file = item.getAsFile();
-      if (file) {
-        uploadImage(file);
-      }
-    }
-  }
-};
 
 </script>
 
@@ -98,16 +85,35 @@ const handlePaste = (event: ClipboardEvent) => {
 
     <!-- 输入框 + 按钮 -->
     <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <!-- 拖拽区域包裹输入框 -->
+      <div
+          @dragover.prevent
+          @drop.prevent="handleDrop"
+          style="
+      border: 1px dashed #ccc;
+      padding: 8px;
+      border-radius: 4px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    "
+      >
+        <a-input
+            v-model:value="input"
+            placeholder="输入消息或拖拽文件..."
+            @keyup.enter="handleSend"
+            @paste="handlePaste"
+            :disabled="loading"
+            style="flex: 1"
+        />
+      </div>
 
-      <a-input
-          v-model:value="input"
-          placeholder="输入消息..."
-          @keyup.enter="handleSend"
-          @paste="handlePaste"
-          :disabled="loading"
-      />
-      <a-button type="primary" @click="handleSend" :loading="loading">发送</a-button>
+      <!-- 发送按钮 -->
+      <a-button type="primary" @click="handleSend" :loading="loading">
+        发送
+      </a-button>
     </div>
+
   </div>
 </template>
 
