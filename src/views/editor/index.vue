@@ -30,19 +30,12 @@
   </div>
 </template>
 
-
-<script>
-export default {
-  name: 'editor',
-}
-</script>
-
 <script setup>
-import '@wangeditor/editor/dist/css/style.css' // 引入样式
-
+import '@wangeditor/editor/dist/css/style.css'
 import {onBeforeUnmount, ref, shallowRef, onMounted} from 'vue'
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
 const showPreview = ref(false)
+
 
 // 编辑器实例
 const editorRef = shallowRef()

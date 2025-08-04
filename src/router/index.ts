@@ -1,7 +1,7 @@
 import {createRouter, createWebHashHistory, type RouteRecordRaw} from 'vue-router';
-import editor from "@/views/editor/index.vue";
 import home from "@/views/home/index.vue";
 import ollama from "@/views/ollama/index.vue";
+import editor from "@/views/editor/index.vue";
 
 const staticRoutes: RouteRecordRaw[]  = [
     {
