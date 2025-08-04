@@ -63,15 +63,90 @@
           <template #title>
             Live
           </template>
-          <a-menu-item key="everyWhere">EveryWhere</a-menu-item>
-          <a-menu-item key="ercot">ERCOT</a-menu-item>
-          <a-menu-item key="caiso">CAISO</a-menu-item>
-          <a-menu-item key="spp">SPP</a-menu-item>
-          <a-menu-item key="pjm">PJM</a-menu-item>
-          <a-menu-item key="miso">MISO</a-menu-item>
-          <a-menu-item key="nyiso">NYISO</a-menu-item>
-          <a-menu-item key="isone">ISONE</a-menu-item>
-          <a-menu-item key="ieso">IESO</a-menu-item>
+          <a-menu-item key="everyWhere">
+            <router-link
+                to="/home/everyWhere"
+                class="nav-link"
+                active-class="nav-link-active">
+              EveryWhere
+            </router-link>
+          </a-menu-item>
+
+          <a-menu-item key="ercot">
+            <router-link
+                to="/home/electric"
+                class="nav-link"
+                active-class="nav-link-active">
+              ERCOT
+            </router-link>
+
+          </a-menu-item>
+          <a-menu-item key="caiso">
+            <router-link
+                to="/home/californiaISO"
+                class="nav-link"
+                active-class="nav-link-active">
+              CAISO
+            </router-link>
+
+          </a-menu-item>
+          <a-menu-item key="spp">
+            <router-link
+                to="/home/southwestPowerPool"
+                class="nav-link"
+                active-class="nav-link-active">
+              SPP
+            </router-link>
+          </a-menu-item>
+
+
+          <a-menu-item key="pjm">
+            <router-link
+                to="/home/pjm"
+                class="nav-link"
+                active-class="nav-link-active">
+              PJM
+            </router-link>
+          </a-menu-item>
+
+
+          <a-menu-item key="miso">
+            <router-link
+                to="/home/midcontinentISO"
+                class="nav-link"
+                active-class="nav-link-active">
+              MISO
+            </router-link>
+          </a-menu-item>
+
+
+
+          <a-menu-item key="nyiso">
+            <router-link
+                to="/home/newYorkIso"
+                class="nav-link"
+                active-class="nav-link-active">
+              NYISO
+            </router-link>
+          </a-menu-item>
+          <a-menu-item key="isone">
+            <router-link
+                to="/home/newEnglandISO"
+                class="nav-link"
+                active-class="nav-link-active">
+              ISONE
+            </router-link>
+          </a-menu-item>
+          <a-menu-item key="ieso">
+            <router-link
+              to="/home/iESO"
+              class="nav-link"
+              active-class="nav-link-active">
+            IESO
+            </router-link>
+          </a-menu-item>
+
+
         </a-sub-menu>
 
         <a-menu-item key="sub2">
@@ -130,7 +205,8 @@
           <template #icon>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14.673 15.36a4.978 4.978 0 0 1 -2.673 -1.36a5 5 0 0 0 -7 0v-9a5 5 0 0 1 7 0a5 5 0 0 0 7 0v7"></path>
+              <path
+                  d="M14.673 15.36a4.978 4.978 0 0 1 -2.673 -1.36a5 5 0 0 0 -7 0v-9a5 5 0 0 1 7 0a5 5 0 0 0 7 0v7"></path>
               <path d="M5 21v-7"></path>
               <path d="M19 16l-2 3h4l-2 3"></path>
             </svg>
@@ -194,7 +270,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/everyWhere') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             EveryWhere
           </a-button>
         </router-link>
@@ -204,7 +283,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/electric') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             Electric Reliability Council of Texas
           </a-button>
         </router-link>
@@ -214,7 +296,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/californiaISO') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             California ISO
           </a-button>
         </router-link>
@@ -223,7 +308,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/southwestPowerPool') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             Southwest Power Pool
           </a-button>
         </router-link>
@@ -233,7 +321,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/pjm') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             PJM
           </a-button>
         </router-link>
@@ -244,7 +335,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/midcontinentISO') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             Midcontinent ISO
           </a-button>
         </router-link>
@@ -254,7 +348,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/newYorkIso') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             New York ISO
           </a-button>
         </router-link>
@@ -264,7 +361,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/newEnglandISO') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             ISO New England
           </a-button>
         </router-link>
@@ -275,7 +375,10 @@
             class="nav-link"
             active-class="nav-link-active"
         >
-          <a-button type="primary" class="custom-button-non-active">
+          <a-button
+              type="primary"
+              :class="isActive('/home/iESO') ? 'custom-button-active' : 'custom-button-non-active'"
+          >
             IESO
           </a-button>
         </router-link>
@@ -293,19 +396,25 @@
 
 
 <script lang="ts" setup>
-import {LogoutOutlined} from '@ant-design/icons-vue';
-import {ref} from 'vue';
+import {ref, onMounted} from 'vue';
+
 import {
-  UserOutlined,
   MenuUnfoldOutlined,
-  AreaChartOutlined,
-  EyeOutlined,
   MenuFoldOutlined,
 } from '@ant-design/icons-vue';
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
 
 const selectedKeys = ref<string[]>(['1']);
 const collapsed = ref<boolean>(false);
 
+
+const route = useRoute()
+
+const isActive = (path : any) => {
+  return route.path === path
+}
 
 </script>
 <style>
