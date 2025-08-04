@@ -2,6 +2,18 @@
   <a-layout style="min-height: 100vh">
     <a-layout-sider v-model:collapsed="collapsed" theme="light" :trigger="null" collapsible>
       <div class="logo"/>
+      <div style="display: flex; align-items: center">
+        <menu-unfold-outlined
+            v-if="collapsed"
+            class="trigger right-shift"
+            @click="() => (collapsed = !collapsed)"
+        />
+        <menu-fold-outlined
+            v-else
+            class="trigger right-shift"
+            @click="() => (collapsed = !collapsed)"
+        />
+      </div>
       <a-menu v-model:selectedKeys="selectedKeys" theme="light" mode="inline">
         <a-sub-menu key="sub1">
           <template #title>
@@ -23,29 +35,17 @@
       <a-layout-header
           style="background: #fff; padding: 0; display: flex; align-items: center; justify-content: space-between">
         <!-- 左侧：收缩按钮 -->
-        <div style="display: flex; align-items: center">
-          <menu-unfold-outlined
-              v-if="collapsed"
-              class="trigger right-shift"
-              @click="() => (collapsed = !collapsed)"
-          />
-          <menu-fold-outlined
-              v-else
-              class="trigger right-shift"
-              @click="() => (collapsed = !collapsed)"
-          />
-        </div>
+
 
         <div style="display: flex; align-items: center; margin-right: 20px">
           <a-avatar style="background-color: #87d068; margin-right: 8px">U</a-avatar>
           <span style="margin-right: 12px">Admin</span>
           <a-button type="primary" danger shape="circle" @click="onLogout">
             <template #icon>
-              <LogoutOutlined />
+              <LogoutOutlined/>
             </template>
           </a-button>
         </div>
-
 
 
       </a-layout-header>
@@ -60,7 +60,7 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import { LogoutOutlined } from '@ant-design/icons-vue';
+import {LogoutOutlined} from '@ant-design/icons-vue';
 import {ref} from 'vue';
 import {
   UserOutlined,
@@ -73,8 +73,7 @@ import {
 const selectedKeys = ref<string[]>(['1']);
 const collapsed = ref<boolean>(false);
 
-function onLogout()
-{
+function onLogout() {
 
 }
 </script>

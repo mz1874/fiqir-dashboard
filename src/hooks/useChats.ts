@@ -1,7 +1,7 @@
-import { ref } from 'vue';
+import {ref} from 'vue';
 import axios from 'axios';
-import type { ChatMessage } from '@/interface/ChatMessage';
-import { message as antdMessage } from 'ant-design-vue';
+import type {ChatMessage} from '@/interface/ChatMessage';
+import {message as antdMessage} from 'ant-design-vue';
 
 export function useChat() {
     const input = ref('');
@@ -59,17 +59,17 @@ export function useChat() {
         const userMessage = input.value.trim();
         if (!userMessage || !selectedModel.value) return;
 
-        messages.value.push({ role: 'user', content: userMessage });
+        messages.value.push({role: 'user', content: userMessage});
         input.value = '';
         loading.value = true;
 
-        const assistantMessage: ChatMessage = { role: 'assistant', content: '' };
+        const assistantMessage: ChatMessage = {role: 'assistant', content: ''};
         messages.value.push(assistantMessage);
 
         try {
             const response = await fetch(`${ollamaUrl.value}/api/chat`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     model: selectedModel.value,
                     messages: messages.value.map(m => ({
@@ -89,9 +89,9 @@ export function useChat() {
             }
 
             while (true) {
-                const { value, done } = await reader.read();
+                const {value, done} = await reader.read();
                 if (done) break;
-                buffer += decoder.decode(value, { stream: true });
+                buffer += decoder.decode(value, {stream: true});
 
                 const lines = buffer.split('\n');
                 buffer = lines.pop() || '';
@@ -129,12 +129,13 @@ export function useChat() {
     };
 
     function handleDrop(event: DragEvent) {
+        event.preventDefault();
+
         const files = event.dataTransfer?.files;
-        if (files && files.length) {
-            for (const file of files) {
-                console.log('Dropped file:', file);
-                uploadImage(file);
-            }
+        if (!files || files.length === 0) return;
+
+        for (const file of Array.from(files)) {
+            uploadImage(file);
         }
     }
 
@@ -143,7 +144,7 @@ export function useChat() {
         const items = event.clipboardData?.items;
         if (!items) return;
 
-        for (const item of items) {
+        for (const item of Array.from(items)) {
             if (item.type.startsWith('image/')) {
                 const file = item.getAsFile();
                 if (file) {
@@ -152,6 +153,7 @@ export function useChat() {
             }
         }
     };
+
 
     return {
         uploadedFiles,

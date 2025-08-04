@@ -33,6 +33,7 @@ declare module 'vue' {
     ATypographyParagraph: typeof import('ant-design-vue/es')['TypographyParagraph']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    LiveHeader: typeof import('./src/components/live-header/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

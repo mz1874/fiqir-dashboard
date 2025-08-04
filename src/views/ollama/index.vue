@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import {ref, onMounted} from 'vue';
+import {onMounted} from 'vue';
 import {useChat} from "@/hooks/useChats";
-import axios from 'axios';
 
 const {
   input,
