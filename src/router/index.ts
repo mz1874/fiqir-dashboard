@@ -2,8 +2,19 @@ import {createRouter, createWebHashHistory, type RouteRecordRaw} from 'vue-route
 import home from "@/views/home/index.vue";
 import ollama from "@/views/ollama/index.vue";
 import editor from "@/views/editor/index.vue";
+import everywhere from "@/views/everywhere/index.vue";
+import electric from "@/views/electric/index.vue";
+import californiaISO from "@/views/californiaISO/index.vue";
+import southwestPowerPool from "@/views/southwestPowerPool/index.vue";
+import pjm from "@/views/pjm/index.vue";
+import midcontinentISO from "@/views/midcontinentISO/index.vue";
 
 const staticRoutes: RouteRecordRaw[]  = [
+    {
+        path: '/',
+        name: 'ollama',
+        component: ollama
+    },
     {
         path: '/editor',
         name: 'editor',
@@ -12,15 +23,44 @@ const staticRoutes: RouteRecordRaw[]  = [
     {
         path: '/home',
         name: 'home',
-        component: home
-    },
-    {
-        path: '/',
-        name: 'ollama',
-        component: ollama
-    },
+        component: home,
+        redirect: '/home/everyWhere',
+        children: [
+            {
+                path: 'everyWhere',
+                name: 'everyWhere',
+                component: everywhere
+            },
+            {
+                path: 'electric',
+                name: 'electric',
+                component: electric
+            },
+            {
+                path: 'californiaISO',
+                name: 'californiaISO',
+                component: californiaISO
+            },
+            {
+                path: 'southwestPowerPool',
+                name: 'southwestPowerPool',
+                component: southwestPowerPool
+            },
+            {
+                path: 'pjm',
+                name: 'pjm',
+                component: pjm
+            },
+            {
+                path: 'midcontinentISO',
+                name: 'midcontinentISO',
+                component: midcontinentISO
+            },
 
+        ]
+    }
 ];
+
 
 const router = createRouter({
     history: createWebHashHistory(),

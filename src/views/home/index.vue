@@ -30,19 +30,38 @@
 
       <a-menu v-model:selectedKeys="selectedKeys" theme="light" mode="inline">
         <a-sub-menu key="sub1">
+          <template #icon>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+              <path d="M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"></path>
+              <path d="M15.9 20.11l0 .01"></path>
+              <path d="M19.04 17.61l0 .01"></path>
+              <path d="M20.77 14l0 .01"></path>
+              <path d="M20.77 10l0 .01"></path>
+              <path d="M19.04 6.39l0 .01"></path>
+              <path d="M15.9 3.89l0 .01"></path>
+              <path d="M12 3l0 .01"></path>
+              <path d="M8.1 3.89l0 .01"></path>
+              <path d="M4.96 6.39l0 .01"></path>
+              <path d="M3.23 10l0 .01"></path>
+              <path d="M3.23 14l0 .01"></path>
+              <path d="M4.96 17.61l0 .01"></path>
+              <path d="M8.1 20.11l0 .01"></path>
+              <path d="M12 21l0 .01"></path>
+            </svg>
+          </template>
           <template #title>
-             <span class="menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                     class="_linkIcon_ub464_87"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path><path
-                    d="M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"></path><path d="M15.9 20.11l0 .01"></path><path
-                    d="M19.04 17.61l0 .01"></path><path d="M20.77 14l0 .01"></path><path d="M20.77 10l0 .01"></path><path
-                    d="M19.04 6.39l0 .01"></path><path d="M15.9 3.89l0 .01"></path><path d="M12 3l0 .01"></path><path
-                    d="M8.1 3.89l0 .01"></path><path d="M4.96 6.39l0 .01"></path><path d="M3.23 10l0 .01"></path><path
-                    d="M3.23 14l0 .01"></path><path d="M4.96 17.61l0 .01"></path><path d="M8.1 20.11l0 .01"></path><path
-                    d="M12 21l0 .01"></path></svg>
-                <span>Live</span>
-             </span>
+            Live
           </template>
           <a-menu-item key="everyWhere">EveryWhere</a-menu-item>
           <a-menu-item key="ercot">ERCOT</a-menu-item>
@@ -171,7 +190,7 @@
           style="background: #fff; padding: 0 15px; display: flex; align-items: center; justify-content: start; gap: 10px;"
       >
         <router-link
-            to="xx"
+            to="/home/everyWhere"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -179,8 +198,9 @@
             EveryWhere
           </a-button>
         </router-link>
+
         <router-link
-            to="xx"
+            to="/home/electric"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -188,8 +208,9 @@
             Electric Reliability Council of Texas
           </a-button>
         </router-link>
+
         <router-link
-            to="xx"
+            to="/home/californiaISO"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -198,7 +219,7 @@
           </a-button>
         </router-link>
         <router-link
-            to="xx"
+            to="/home/southwestPowerPool"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -206,8 +227,9 @@
             Southwest Power Pool
           </a-button>
         </router-link>
+
         <router-link
-            to="xx"
+            to="/home/pjm"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -215,8 +237,10 @@
             PJM
           </a-button>
         </router-link>
+
+
         <router-link
-            to="xx"
+            to="/home/midcontinentISO"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -224,6 +248,7 @@
             Midcontinent ISO
           </a-button>
         </router-link>
+
         <router-link
             to="xx"
             class="nav-link"
@@ -258,7 +283,7 @@
       <a-layout-content
           :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
       >
-        Content
+        <router-view></router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -279,9 +304,7 @@ import {
 const selectedKeys = ref<string[]>(['1']);
 const collapsed = ref<boolean>(false);
 
-function onLogout() {
 
-}
 </script>
 <style>
 
