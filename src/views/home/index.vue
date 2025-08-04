@@ -250,7 +250,7 @@
         </router-link>
 
         <router-link
-            to="xx"
+            to="/home/newYorkIso"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -260,7 +260,7 @@
         </router-link>
 
         <router-link
-            to="xx"
+            to="/home/newEnglandISO"
             class="nav-link"
             active-class="nav-link-active"
         >
@@ -268,8 +268,10 @@
             ISO New England
           </a-button>
         </router-link>
+
+
         <router-link
-            to="xx"
+            to="/home/iESO"
             class="nav-link"
             active-class="nav-link-active"
         >

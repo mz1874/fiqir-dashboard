@@ -8,6 +8,9 @@ import californiaISO from "@/views/californiaISO/index.vue";
 import southwestPowerPool from "@/views/southwestPowerPool/index.vue";
 import pjm from "@/views/pjm/index.vue";
 import midcontinentISO from "@/views/midcontinentISO/index.vue";
+import newYorkIso from "@/views/newYorkIso/index.vue";
+import newEnglandISO from "@/views/newEnglandISO/index.vue";
+import iESO from "@/views/iESO/index.vue";
 
 const staticRoutes: RouteRecordRaw[]  = [
     {
@@ -56,6 +59,22 @@ const staticRoutes: RouteRecordRaw[]  = [
                 name: 'midcontinentISO',
                 component: midcontinentISO
             },
+            {
+                path: 'newYorkIso',
+                name: 'newYorkIso',
+                component: newYorkIso
+            },
+            {
+                path: 'newEnglandISO',
+                name: 'newEnglandISO',
+                component: newEnglandISO
+            },
+            {
+                path: 'iESO',
+                name: 'iESO',
+                component: iESO
+            },
+
 
         ]
     }
