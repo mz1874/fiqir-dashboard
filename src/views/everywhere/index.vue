@@ -19,6 +19,9 @@ const priceChartRef8 = ref<HTMLElement | null>(null)
 
 // 图表实例缓存（避免重复初始化）
 const chartMap = new Map<HTMLElement, ECharts>()
+// 城市列表和选择值
+const cityList = ['New York', 'London', 'Tokyo', 'Beijing']
+const selectedCity = ref('New York')
 
 // 通用渲染函数
 const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) => {
@@ -317,30 +320,134 @@ onMounted(async () => {
           <a-row>
             <a-col :span="6">
               <div ref="priceChartRef" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
             <a-col :span="6">
               <div ref="priceChartRef2" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
             <a-col :span="6">
               <div ref="priceChartRef3" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
             <a-col :span="6">
               <div ref="priceChartRef4" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
           </a-row>
 
           <a-row>
             <a-col :span="6">
               <div ref="priceChartRef5" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
             <a-col :span="6">
               <div ref="priceChartRef6" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
             <a-col :span="6">
               <div ref="priceChartRef7" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
             <a-col :span="6">
               <div ref="priceChartRef8" style="width: 100%; height: 400px;"></div>
+              <!-- 城市选择框 -->
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <a-select
+                    v-model:value="selectedCity"
+                    style="width: 200px"
+                    placeholder="选择城市"
+                    @change="handleCityChange"
+                >
+                  <a-select-option v-for="city in cityList" :key="city" :value="city">
+                    {{ city }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </a-col>
           </a-row>
         </a-tab-pane>
