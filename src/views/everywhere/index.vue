@@ -3,9 +3,112 @@ import {ArrowRightOutlined} from '@ant-design/icons-vue';
 import {h, onMounted, ref} from 'vue';
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import * as echarts from 'echarts';
+import * as echarts from 'echarts'
+import type { ECharts } from 'echarts'
 
-const lineChartRef = ref(null)
+// 多个 chart ref
+const priceChartRef = ref<HTMLElement | null>(null)
+const priceChartRef2 = ref<HTMLElement | null>(null)
+const priceChartRef3 = ref<HTMLElement | null>(null)
+const priceChartRef4 = ref<HTMLElement | null>(null)
+
+const priceChartRef5 = ref<HTMLElement | null>(null)
+const priceChartRef6 = ref<HTMLElement | null>(null)
+const priceChartRef7 = ref<HTMLElement | null>(null)
+const priceChartRef8 = ref<HTMLElement | null>(null)
+
+// 图表实例缓存（避免重复初始化）
+const chartMap = new Map<HTMLElement, ECharts>()
+
+// 通用渲染函数
+const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) => {
+  if (!domRef) return
+
+  let instance = chartMap.get(domRef)
+  if (!instance) {
+    instance = echarts.init(domRef)
+    chartMap.set(domRef, instance)
+  }
+
+  instance.setOption(option)
+  instance.resize()
+}
+
+// 通用 option（可复制修改用于不同图表）
+const priceOption: echarts.EChartsOption = {
+  title: {
+    text: 'Price Trend',
+    left: 'center',
+    textStyle: {
+      fontSize: 14
+    }
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {
+    data: ['Day Ahead', 'Real Time']
+  },
+  grid: {
+    top: 60,
+    left: 50,
+    right: 30,
+    bottom: 80
+  },
+  xAxis: [
+    {
+      type: 'category',
+      data: ['0h', '2h', '4h', '6h', '8h', '10h', '12h', '14h', '16h', '18h', '20h', '22h'],
+      axisTick: {
+        alignWithLabel: true
+      },
+      axisLabel: {
+        rotate: 0
+      }
+    },
+    {
+      type: 'category',
+      position: 'bottom',
+      offset: 30,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: {
+        formatter: function (_: any, index: number) {
+          const dayLabels = ['8/4', '8/4', '8/4', '8/4', '8/4', '8/4', '8/5', '8/5', '8/5', '8/5', '8/5', '8/5']
+          return dayLabels[index]
+        }
+      }
+    }
+  ],
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      formatter: '${value}'
+    }
+  },
+  series: [
+    {
+      name: 'Day Ahead',
+      type: 'line',
+      xAxisIndex: 0,
+      data: [22, 24, 21, 23, 25, 26, 27, 29, 31, 30, 28, 26],
+      smooth: true,
+      lineStyle: {
+        color: '#1890ff'
+      }
+    },
+    {
+      name: 'Real Time',
+      type: 'line',
+      xAxisIndex: 0,
+      data: [20, 22, 23, 24, 27, 28, 29, 31, 33, 32, 30, 29],
+      smooth: true,
+      lineStyle: {
+        color: '#f5222d'
+      }
+    }
+  ]
+}
 
 
 const malaysiaPlots = {
@@ -83,15 +186,13 @@ const activeKey = ref('1');
 const mapContainerId = 'geojson-map'
 
 
-
-onMounted(async () => {
+const buildMap = () => {
   const map = new maplibregl.Map({
     container: mapContainerId,
     style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     center: [103.8, 1.5], // 聚焦马来西亚中心
     zoom: 5,
   });
-
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
   map.on('load', async () => {
@@ -101,14 +202,13 @@ onMounted(async () => {
       type: 'FeatureCollection',
       features: world.features.filter((f: any) => f.properties.ISO_A3 === 'MYS'),
     };
-
     // 加省级边界 GeoJSON
     const malaysiaADM1 = await fetch('/geoBoundaries-MYS-ADM1_simplified.geojson')
         .then(r => r.json());
 
     console.log(malaysiaADM1);
 
-    map.addSource('malaysia-country', {type: 'geojson', data: malaysia});
+    map.addSource('malaysia-country', {type: 'geojson', data: malaysia as any});
     map.addSource('malaysia-states', {type: 'geojson', data: malaysiaADM1});
 
     map.addLayer({
@@ -133,7 +233,7 @@ onMounted(async () => {
     // 添加标记点的 GeoJSON 数据源
     map.addSource('malaysia-plots', {
       type: 'geojson',
-      data: malaysiaPlots,
+      data: malaysiaPlots as any,
     });
 
 // 点图层
@@ -175,6 +275,20 @@ onMounted(async () => {
       return bounds;
     }, new maplibregl.LngLatBounds()));
   });
+}
+
+
+onMounted(async () => {
+  buildMap();
+  renderChart(priceChartRef.value, priceOption)
+  renderChart(priceChartRef2.value, priceOption)
+  renderChart(priceChartRef3.value, priceOption)
+  renderChart(priceChartRef4.value, priceOption)
+
+  renderChart(priceChartRef5.value, priceOption)
+  renderChart(priceChartRef6.value, priceOption)
+  renderChart(priceChartRef7.value, priceOption)
+  renderChart(priceChartRef8.value, priceOption)
 });
 </script>
 
@@ -198,14 +312,42 @@ onMounted(async () => {
 
   <a-row style="margin-top: 20px">
     <a-col :span="24">
-        <a-tabs v-model:activeKey="activeKey" size="large">
-          <a-tab-pane key="1" tab="Prices">
-            <div ref="lineChartRef" style="width: 100%; height: 400px"></div>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="Fuel Mix" force-render>Content of Tab Pane 2</a-tab-pane>
-          <a-tab-pane key="3" tab="Load">Content of Tab Pane 3</a-tab-pane>
-          <a-tab-pane key="4" tab="Renewables">Content of Tab Pane 3</a-tab-pane>
-        </a-tabs>
+      <a-tabs v-model:activeKey="activeKey" size="large">
+        <a-tab-pane key="1" tab="Prices">
+          <a-row>
+            <a-col :span="6">
+              <div ref="priceChartRef" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="priceChartRef2" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="priceChartRef3" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="priceChartRef4" style="width: 100%; height: 400px;"></div>
+            </a-col>
+          </a-row>
+
+          <a-row>
+            <a-col :span="6">
+              <div ref="priceChartRef5" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="priceChartRef6" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="priceChartRef7" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="priceChartRef8" style="width: 100%; height: 400px;"></div>
+            </a-col>
+          </a-row>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="Fuel Mix" force-render>Content of Tab Pane 2</a-tab-pane>
+        <a-tab-pane key="3" tab="Load">Content of Tab Pane 3</a-tab-pane>
+        <a-tab-pane key="4" tab="Renewables">Content of Tab Pane 3</a-tab-pane>
+      </a-tabs>
     </a-col>
   </a-row>
 </template>
@@ -262,10 +404,10 @@ onMounted(async () => {
 }
 
 
- ::v-deep(.ant-tabs-ink-bar) {
-   background-color: rgb(58,125,93) !important;
-   height: 4px;
-   border-radius: 2px;
- }
+::v-deep(.ant-tabs-ink-bar) {
+  background-color: rgb(58, 125, 93) !important;
+  height: 4px;
+  border-radius: 2px;
+}
 
 </style>
