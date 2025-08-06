@@ -392,7 +392,7 @@
       </a-layout-header>
 
       <!--   主要内容   -->
-      <a-layout-content
+      <a-layout-content class="override-style"
           :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
       >
         <router-view></router-view>
@@ -441,6 +441,7 @@ const isActive = (path : any) => {
   cursor: pointer;
   transition: color 0.3s;
 }
+
 
 #components-layout-demo-custom-trigger .trigger:hover {
   color: #1890ff;

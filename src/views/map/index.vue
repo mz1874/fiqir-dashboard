@@ -1,9 +1,26 @@
 <script setup lang="ts">
 import maplibregl from "maplibre-gl";
-import {onMounted} from "vue";
+import {computed, onMounted, ref} from "vue";
 import 'maplibre-gl/dist/maplibre-gl.css'
+import dayjs, {Dayjs} from 'dayjs';
+import {CaretLeftOutlined, CaretRightOutlined, VerticalLeftOutlined} from '@ant-design/icons-vue'
 
+const dayValue = ref<Dayjs>();
 const mapContainerId = 'geojson-map'
+
+const startDate = dayjs('2025-08-01');
+const totalDays = 30;
+
+const sliderValue = ref(0);
+
+const selectedDate = computed(() =>
+    startDate.add(sliderValue.value, 'day').format('YYYY-MM-DD')
+);
+
+const formatTooltip = (val: number) => {
+  return startDate.add(val, 'day').format('YYYY-MM-DD');
+};
+
 
 const malaysiaPlots = {
   type: 'FeatureCollection',
@@ -63,7 +80,6 @@ const usaPlots = {
 };
 
 
-
 const buildMap = () => {
   const map = new maplibregl.Map({
     container: mapContainerId,
@@ -88,22 +104,22 @@ const buildMap = () => {
     const usaADM1 = await fetch('/geoBoundaries-USA-ADM1_simplified.geojson')
         .then(r => r.json());
 
-    map.addSource('usa-states', { type: 'geojson', data: usaADM1 });
+    map.addSource('usa-states', {type: 'geojson', data: usaADM1});
     map.addLayer({
       id: 'state-fill-usa',
       type: 'fill',
       source: 'usa-states',
-      paint: { 'fill-color': '#90caf9', 'fill-opacity': 0.3 },
+      paint: {'fill-color': '#90caf9', 'fill-opacity': 0.3},
     });
     map.addLayer({
       id: 'state-outline-usa',
       type: 'line',
       source: 'usa-states',
-      paint: { 'line-color': '#1d3557', 'line-width': 1 },
+      paint: {'line-color': '#1d3557', 'line-width': 1},
     });
 
     // 添加美国标记点
-    map.addSource('usa-plots', { type: 'geojson', data: usaPlots });
+    map.addSource('usa-plots', {type: 'geojson', data: usaPlots});
     map.addLayer({
       id: 'usa-points',
       type: 'circle',
@@ -162,13 +178,13 @@ const buildMap = () => {
 
 // 鼠标悬停事件：显示 popup
     // Popup 悬浮提示（通用）
-    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false });
+    const popup = new maplibregl.Popup({closeButton: false, closeOnClick: false});
 
     const bindPopup = (layerId: string) => {
       map.on('mouseenter', layerId, (e: any) => {
         map.getCanvas().style.cursor = 'pointer';
         const coordinates = e.features[0].geometry.coordinates.slice();
-        const { name, value } = e.features[0].properties;
+        const {name, value} = e.features[0].properties;
 
         popup.setLngLat(coordinates)
             .setHTML(`<strong>${name}</strong><br/>${value}`)
@@ -184,46 +200,117 @@ const buildMap = () => {
     bindPopup('plot-points');
     bindPopup('usa-points');
 
-    // 缩放到适合全部范围
+    const getCoordinates = (feature: any) => {
+      const geom = feature.geometry;
+      const coords = geom.coordinates;
+
+      switch (geom.type) {
+        case 'Polygon':
+          return coords.flat();
+        case 'MultiPolygon':
+          return coords.flat(2);
+        default:
+          return [];
+      }
+    };
+
     const allCoords = [
-      ...malaysiaADM1.features.flatMap(f => f.geometry.coordinates.flat(2)),
-      ...usaADM1.features.flatMap(f => f.geometry.coordinates.flat(2)),
+      ...malaysiaADM1.features.flatMap(getCoordinates),
+      ...usaADM1.features.flatMap(getCoordinates),
     ];
 
     const bounds = allCoords.reduce((b: any, coord: any) => {
-      b.extend(coord);
+      if (Array.isArray(coord) && coord.length === 2) {
+        b.extend(coord);
+      }
       return b;
     }, new maplibregl.LngLatBounds());
 
-    map.fitBounds(bounds, { padding: 50 });
   });
 }
 
-onMounted(()=>{
+const value1 = ref('lucy');
+
+const focus = () => {
+  console.log('focus');
+};
+
+const handleChange = () => {
+  console.log(value1.value);
+};
+
+onMounted(() => {
   buildMap();
 })
 </script>
 
+
 <template>
-  <a-row class="full-height-row">
-    <a-col :span="24">
-      <div :id="mapContainerId" class="map-container"/>
-    </a-col>
-  </a-row>
+  <div class="map-wrapper">
+    <div class="header">
+      <a-select
+          v-model:value="value1"
+          style="width: 200px"
+          @change="handleChange"
+      >
+        <a-select-option value="jack">Normal Price Map</a-select-option>
+        <a-select-option value="lucy">Lucy</a-select-option>
+      </a-select>
+      <a-button @click="decrease">
+        <template #icon>
+          <CaretLeftOutlined/>
+        </template>
+      </a-button>
+
+      <a-slider v-model:value="sliderValue" :min="0" :max="totalDays" style="flex: 1;" :tip-formatter="formatTooltip"/>
+      <a-button @click="increase">
+        <template #icon>
+          <CaretRightOutlined/>
+        </template>
+      </a-button>
+      <a-button @click="increase">
+        <template #icon>
+          <VerticalLeftOutlined/>
+        </template>
+      </a-button>
+      <a-date-picker v-model:value="dayValue"/>
+    </div>
+    <div :id="mapContainerId" class="map-container"/>
+  </div>
 </template>
 
 <style scoped>
 .map-container {
-  width: 100vw;
-  height: 85vh;
+  width: 100%;
+  height: 80%;
   margin: 0;
   padding: 0;
 }
 
+.map-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  padding: 10px;
+}
+
+.map-container {
+  flex: 1; /* 自动占据剩下的空间 */
+  width: 100%;
+}
 
 /* SVG 自适应宽高 */
 .map-container svg {
   width: 100%;
-  height: 100%;
+  height: 80%;
 }
+
+
 </style>
