@@ -11,8 +11,9 @@ import midcontinentISO from "@/views/midcontinentISO/index.vue";
 import newYorkIso from "@/views/newYorkIso/index.vue";
 import newEnglandISO from "@/views/newEnglandISO/index.vue";
 import iESO from "@/views/iESO/index.vue";
+import map from "@/views/map/index.vue";
 
-const staticRoutes: RouteRecordRaw[]  = [
+const staticRoutes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'ollama',
@@ -23,6 +24,7 @@ const staticRoutes: RouteRecordRaw[]  = [
         name: 'editor',
         component: editor
     },
+
     {
         path: '/home',
         name: 'home',
@@ -74,14 +76,23 @@ const staticRoutes: RouteRecordRaw[]  = [
                 name: 'iESO',
                 component: iESO
             },
-
-
+            {
+                path : "map",
+                name : 'map',
+                component: map
+            },
         ]
     }
 ];
 
 
+
+
+
+
+console.log(staticRoutes)
 const router = createRouter({
+
     history: createWebHashHistory(),
     routes: staticRoutes,
 });
@@ -110,5 +121,4 @@ let dynamicRoutesLoaded = false;
 //
 //     next();
 // });
-
 export default router;

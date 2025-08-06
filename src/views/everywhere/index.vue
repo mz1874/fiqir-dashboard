@@ -17,6 +17,10 @@ const priceChartRef6 = ref<HTMLElement | null>(null)
 const priceChartRef7 = ref<HTMLElement | null>(null)
 const priceChartRef8 = ref<HTMLElement | null>(null)
 
+const handleCityChange = () => {
+
+}
+
 // 图表实例缓存（避免重复初始化）
 const chartMap = new Map<HTMLElement, ECharts>()
 // 城市列表和选择值
@@ -69,19 +73,6 @@ const priceOption: echarts.EChartsOption = {
         rotate: 0
       }
     },
-    {
-      type: 'category',
-      position: 'bottom',
-      offset: 30,
-      axisLine: { show: false },
-      axisTick: { show: false },
-      axisLabel: {
-        formatter: function (_: any, index: number) {
-          const dayLabels = ['8/4', '8/4', '8/4', '8/4', '8/4', '8/4', '8/5', '8/5', '8/5', '8/5', '8/5', '8/5']
-          return dayLabels[index]
-        }
-      }
-    }
   ],
   yAxis: {
     type: 'value',

@@ -159,7 +159,14 @@
               <path d="M19 16l-2 3h4l-2 3"></path>
             </svg>
           </template>
-          <span>Price Map</span>
+
+          <router-link
+              to="/home/map"
+              class="nav-link"
+              active-class="nav-link-active">
+            <span>Price Map</span>
+          </router-link>
+
         </a-menu-item>
 
         <a-menu-item key="sub3">
