@@ -34,6 +34,36 @@ const malaysiaPlots = {
 };
 
 
+const usaPlots = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [-74.006, 40.7128], // 纽约
+      },
+      properties: {
+        name: 'New York City',
+        value: 'Population: 8.5M',
+      },
+    },
+    {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [-118.2437, 34.0522], // 洛杉矶
+      },
+      properties: {
+        name: 'Los Angeles',
+        value: 'Population: 4M',
+      },
+    },
+  ],
+};
+
+
+
 const buildMap = () => {
   const map = new maplibregl.Map({
     container: mapContainerId,
@@ -53,6 +83,39 @@ const buildMap = () => {
     // 加省级边界 GeoJSON
     const malaysiaADM1 = await fetch('/geoBoundaries-MYS-ADM1_simplified.geojson')
         .then(r => r.json());
+
+    // 加载美国 ADM1
+    const usaADM1 = await fetch('/geoBoundaries-USA-ADM1_simplified.geojson')
+        .then(r => r.json());
+
+    map.addSource('usa-states', { type: 'geojson', data: usaADM1 });
+    map.addLayer({
+      id: 'state-fill-usa',
+      type: 'fill',
+      source: 'usa-states',
+      paint: { 'fill-color': '#90caf9', 'fill-opacity': 0.3 },
+    });
+    map.addLayer({
+      id: 'state-outline-usa',
+      type: 'line',
+      source: 'usa-states',
+      paint: { 'line-color': '#1d3557', 'line-width': 1 },
+    });
+
+    // 添加美国标记点
+    map.addSource('usa-plots', { type: 'geojson', data: usaPlots });
+    map.addLayer({
+      id: 'usa-points',
+      type: 'circle',
+      source: 'usa-plots',
+      paint: {
+        'circle-radius': 6,
+        'circle-color': '#2a9d8f',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#fff',
+      },
+    });
+
 
     console.log(malaysiaADM1);
 
@@ -98,30 +161,41 @@ const buildMap = () => {
     });
 
 // 鼠标悬停事件：显示 popup
-    const popup = new maplibregl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-    });
+    // Popup 悬浮提示（通用）
+    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false });
 
-    map.on('mouseenter', 'plot-points', (e: any) => {
-      map.getCanvas().style.cursor = 'pointer';
-      const coordinates = e.features[0].geometry.coordinates.slice();
-      const {name, value} = e.features[0].properties;
+    const bindPopup = (layerId: string) => {
+      map.on('mouseenter', layerId, (e: any) => {
+        map.getCanvas().style.cursor = 'pointer';
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const { name, value } = e.features[0].properties;
 
-      popup.setLngLat(coordinates)
-          .setHTML(`<strong>${name}</strong><br/>${value}`)
-          .addTo(map);
-    });
+        popup.setLngLat(coordinates)
+            .setHTML(`<strong>${name}</strong><br/>${value}`)
+            .addTo(map);
+      });
 
-    map.on('mouseleave', 'plot-points', () => {
-      map.getCanvas().style.cursor = '';
-      popup.remove();
-    });
+      map.on('mouseleave', layerId, () => {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
+    };
 
-    map.fitBounds(malaysiaADM1.features[0].geometry.coordinates.flat(2).reduce((bounds: any, coord: any) => {
-      bounds.extend(coord);
-      return bounds;
-    }, new maplibregl.LngLatBounds()));
+    bindPopup('plot-points');
+    bindPopup('usa-points');
+
+    // 缩放到适合全部范围
+    const allCoords = [
+      ...malaysiaADM1.features.flatMap(f => f.geometry.coordinates.flat(2)),
+      ...usaADM1.features.flatMap(f => f.geometry.coordinates.flat(2)),
+    ];
+
+    const bounds = allCoords.reduce((b: any, coord: any) => {
+      b.extend(coord);
+      return b;
+    }, new maplibregl.LngLatBounds());
+
+    map.fitBounds(bounds, { padding: 50 });
   });
 }
 
