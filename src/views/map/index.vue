@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import maplibregl from "maplibre-gl";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import 'maplibre-gl/dist/maplibre-gl.css'
 import dayjs, {Dayjs} from 'dayjs';
 import {CaretLeftOutlined, CaretRightOutlined, VerticalLeftOutlined} from '@ant-design/icons-vue'
@@ -78,6 +78,13 @@ const usaPlots = {
     },
   ],
 };
+
+const value = ref<number>(1);
+const radioStyle = reactive({
+  display: 'flex',
+  height: '30px',
+  lineHeight: '30px',
+});
 
 
 const buildMap = () => {
@@ -229,7 +236,7 @@ const buildMap = () => {
   });
 }
 
-const value1 = ref('lucy');
+const value1 = ref('ALL');
 
 const focus = () => {
   console.log('focus');
@@ -268,14 +275,54 @@ onMounted(() => {
           <CaretRightOutlined/>
         </template>
       </a-button>
-      <a-button @click="increase">
+      <a-button @click="toEndDays">
         <template #icon>
           <VerticalLeftOutlined/>
         </template>
       </a-button>
       <a-date-picker v-model:value="dayValue"/>
     </div>
-    <div :id="mapContainerId" class="map-container"/>
+    <div :id="mapContainerId" class="map-container">
+      <div class="map-label">
+        <a-row>
+          <a-col :span="15">
+            <a-input placeholder="Search for a Node"></a-input>
+
+          </a-col>
+
+          <a-col :span="9">
+            <a-select
+                ref="select"
+                v-model:value="value1"
+                style="width: 100px; margin-left: 10px"
+                @focus="focus"
+                @change="handleChange"
+            >
+              <a-select-option value="jack">ALL</a-select-option>
+              <a-select-option value="Malaysia">Malaysia</a-select-option>
+              <a-select-option value="US">US</a-select-option>
+            </a-select>
+          </a-col>
+        </a-row>
+
+        <a-row style="margin-top: 10px">
+          <a-col :span="21">
+            Layers
+          </a-col>
+          <a-col :span="3">
+            Hide
+          </a-col>
+          <a-col style="margin-top: 10px">
+            <a-radio-group v-model:value="value" style="display: flex; flex-direction: column;">
+              <a-radio :style="radioStyle" :value="1">Option A</a-radio>
+              <a-radio :style="radioStyle" :value="2">Option B</a-radio>
+            </a-radio-group>
+          </a-col>
+        </a-row>
+
+
+      </div>
+    </div>
   </div>
 </template>
 
@@ -311,6 +358,20 @@ onMounted(() => {
   width: 100%;
   height: 80%;
 }
+
+
+.map-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 10; /* 确保盖住 maplibre 的图层 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 
 
 </style>
