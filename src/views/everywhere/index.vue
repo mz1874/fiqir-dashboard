@@ -31,6 +31,12 @@ const lineChart3 = ref<HTMLElement | null>(null)
 const lineChart4 = ref<HTMLElement | null>(null)
 
 
+const areaChart1 = ref<HTMLElement | null>(null)
+const areaChart2 = ref<HTMLElement | null>(null)
+const areaChart3 = ref<HTMLElement | null>(null)
+const areaChart4 = ref<HTMLElement | null>(null)
+
+
 // var myChart = echarts.init(stackedArea1.value);
 // var option: EChartsOption;
 
@@ -481,6 +487,23 @@ watch(activeKey, async (val) => {
     option && MyLineChart4.setOption(lineChartOptions);
     MyLineChart4.resize();
 
+  }else if (val === '4') {
+    await nextTick();
+    const MyAreaChart1 = echarts.init(areaChart1.value);
+    option && MyAreaChart1.setOption(areaOption);
+    MyAreaChart1.resize();
+
+    const MyAreaChart2 = echarts.init(areaChart2.value);
+    option && MyAreaChart2.setOption(areaOption);
+    MyAreaChart2.resize();
+
+    const MyAreaChart3 = echarts.init(areaChart3.value);
+    option && MyAreaChart3.setOption(areaOption);
+    MyAreaChart3.resize();
+
+    const MyAreaChart4 = echarts.init(areaChart4.value);
+    option && MyAreaChart4.setOption(areaOption);
+    MyAreaChart4.resize();
   }
 });
 
@@ -580,6 +603,67 @@ const buildMap = () => {
   });
 }
 
+
+var areaOption : EChartsOption;
+
+let base = +new Date(1988, 9, 3);
+let oneDay = 24 * 3600 * 1000;
+let areaData = [[base, Math.random() * 300]];
+for (let i = 1; i < 20000; i++) {
+  let now = new Date((base += oneDay));
+  areaData.push([+now, Math.round((Math.random() - 0.5) * 20 + areaData[i - 1][1])]);
+}
+
+areaOption = {
+  tooltip: {
+    trigger: 'axis',
+    position: function (pt) {
+      return [pt[0], '10%'];
+    }
+  },
+  title: {
+    left: 'center',
+    text: 'Large Ara Chart'
+  },
+  toolbox: {
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none'
+      },
+      restore: {},
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'time',
+    boundaryGap: false
+  },
+  yAxis: {
+    type: 'value',
+    boundaryGap: [0, '100%']
+  },
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 0,
+      end: 20
+    },
+    {
+      start: 0,
+      end: 20
+    }
+  ],
+  series: [
+    {
+      name: 'Fake Data',
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      areaStyle: {},
+      data: areaData
+    }
+  ]
+};
 
 onMounted(async () => {
   buildMap();
@@ -785,7 +869,22 @@ onMounted(async () => {
             </a-col>
           </a-row>
         </a-tab-pane>
-        <a-tab-pane key="4" tab="Renewables">Content of Tab Pane 3</a-tab-pane>
+        <a-tab-pane key="4" tab="Renewables">
+          <a-row>
+            <a-col :span="6">
+              <div ref="areaChart1" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="areaChart2" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="areaChart3" style="width: 100%; height: 400px;"></div>
+            </a-col>
+            <a-col :span="6">
+              <div ref="areaChart4" style="width: 100%; height: 400px;"></div>
+            </a-col>
+          </a-row>
+        </a-tab-pane>
       </a-tabs>
     </a-col>
   </a-row>
