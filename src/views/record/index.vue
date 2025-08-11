@@ -139,10 +139,10 @@
           </a-menu-item>
           <a-menu-item key="ieso">
             <router-link
-              to="/home/iESO"
-              class="nav-link"
-              active-class="nav-link-active">
-            IESO
+                to="/home/iESO"
+                class="nav-link"
+                active-class="nav-link-active">
+              IESO
             </router-link>
           </a-menu-item>
 
@@ -190,6 +190,7 @@
               <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
             </svg>
           </template>
+
           <router-link
               to="/alerts"
               class="nav-link"
@@ -276,138 +277,11 @@
 
       </a-menu>
     </a-layout-sider>
-
-    <a-layout>
-      <!--  顶部导航    -->
-      <a-layout-header
-          style="background: #fff; padding: 0 15px; display: flex; align-items: center; justify-content: start; gap: 10px;"
-      >
-        <router-link
-            to="/home/everyWhere"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/everyWhere') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            EveryWhere
-          </a-button>
-        </router-link>
-
-        <router-link
-            to="/home/electric"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/electric') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            Electric Reliability Council of Texas
-          </a-button>
-        </router-link>
-
-        <router-link
-            to="/home/californiaISO"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/californiaISO') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            California ISO
-          </a-button>
-        </router-link>
-        <router-link
-            to="/home/southwestPowerPool"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/southwestPowerPool') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            Southwest Power Pool
-          </a-button>
-        </router-link>
-
-        <router-link
-            to="/home/pjm"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/pjm') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            PJM
-          </a-button>
-        </router-link>
-
-
-        <router-link
-            to="/home/midcontinentISO"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/midcontinentISO') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            Midcontinent ISO
-          </a-button>
-        </router-link>
-
-        <router-link
-            to="/home/newYorkIso"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/newYorkIso') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            New York ISO
-          </a-button>
-        </router-link>
-
-        <router-link
-            to="/home/newEnglandISO"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/newEnglandISO') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            ISO New England
-          </a-button>
-        </router-link>
-
-
-        <router-link
-            to="/home/iESO"
-            class="nav-link"
-            active-class="nav-link-active"
-        >
-          <a-button
-              type="primary"
-              :class="isActive('/home/iESO') ? 'custom-button-active' : 'custom-button-non-active'"
-          >
-            IESO
-          </a-button>
-        </router-link>
-      </a-layout-header>
-
-      <!--   主要内容   -->
-      <a-layout-content class="override-style"
-          :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
-      >
-        <router-view></router-view>
-      </a-layout-content>
-    </a-layout>
+    <a-layout-content class="override-style"
+                      :style="{ margin: '24px 16px', padding: '24px', background: '#f2f5fb', minHeight: '280px' }"
+    >
+      <router-view></router-view>
+    </a-layout-content>
   </a-layout>
 </template>
 

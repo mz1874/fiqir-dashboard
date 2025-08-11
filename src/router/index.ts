@@ -15,6 +15,8 @@ import map from "@/views/map/index.vue";
 import alerts from "@/views/alerts/index.vue";
 import personalAlerts from "@/views/alerts/personalAlerts/index.vue";
 import alertCreate from "@/views/alerts/personalAlerts/alertCreate/index.vue";
+import record from "@/views/record/index.vue";
+import recordList from "@/views/record/list/index.vue";
 
 
 const staticRoutes: RouteRecordRaw[] = [
@@ -106,6 +108,19 @@ const staticRoutes: RouteRecordRaw[] = [
             }
         ]
     },
+    {
+        path : "/record",
+        name : 'record',
+        component: record,
+        redirect: '/record/recordList',
+        children:[
+            {
+                path : "recordList",
+                name : 'recordList',
+                component: recordList
+            },
+        ]
+    }
 ];
 
 

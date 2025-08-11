@@ -211,7 +211,12 @@
               <path d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
             </svg>
           </template>
-          <span>Record Tracker</span>
+          <router-link
+              to="/record"
+              class="nav-link"
+              active-class="nav-link-active">
+            <span>Record Tracker</span>
+          </router-link>
         </a-menu-item>
 
         <a-menu-item key="sub6">
