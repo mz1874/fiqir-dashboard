@@ -12,6 +12,9 @@ import newYorkIso from "@/views/newYorkIso/index.vue";
 import newEnglandISO from "@/views/newEnglandISO/index.vue";
 import iESO from "@/views/iESO/index.vue";
 import map from "@/views/map/index.vue";
+import alerts from "@/views/alerts/index.vue";
+import personalAlerts from "@/views/alerts/personalAlerts/index.vue";
+
 
 const staticRoutes: RouteRecordRaw[] = [
     {
@@ -81,8 +84,22 @@ const staticRoutes: RouteRecordRaw[] = [
                 name : 'map',
                 component: map
             },
+
         ]
-    }
+    },
+    {
+        path : "/alerts",
+        name : 'alerts',
+        component: alerts,
+        redirect: '/alerts/personalAlerts',
+        children:[
+            {
+                path : "personalAlerts",
+                name : 'personalAlerts',
+                component: personalAlerts
+            },
+        ]
+    },
 ];
 
 
