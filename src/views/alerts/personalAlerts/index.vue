@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import {PlusOutlined} from '@ant-design/icons-vue';
+import { useRouter } from 'vue-router'; // Import useRouter from vue-router
+const router = useRouter();
+const pushToCreate = () => {
+  router.push('/alerts/alertCreate');
+}
+
 </script>
 <template>
   <a-row>
@@ -7,7 +13,7 @@ import {PlusOutlined} from '@ant-design/icons-vue';
       <h1>Your Alerts</h1>
     </a-col>
     <a-col :span="2" :push="20">
-      <a-button type="primary" style="background-color: #3a7d5d">
+      <a-button type="primary" style="background-color: #3a7d5d" @click="pushToCreate">
         <PlusOutlined/>
         Primary Button
       </a-button>

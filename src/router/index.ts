@@ -14,6 +14,7 @@ import iESO from "@/views/iESO/index.vue";
 import map from "@/views/map/index.vue";
 import alerts from "@/views/alerts/index.vue";
 import personalAlerts from "@/views/alerts/personalAlerts/index.vue";
+import alertCreate from "@/views/alerts/personalAlerts/alertCreate/index.vue";
 
 
 const staticRoutes: RouteRecordRaw[] = [
@@ -98,6 +99,11 @@ const staticRoutes: RouteRecordRaw[] = [
                 name : 'personalAlerts',
                 component: personalAlerts
             },
+            {
+                path: "alertCreate",
+                name: "alertCreate",
+                component: alertCreate
+            }
         ]
     },
 ];
