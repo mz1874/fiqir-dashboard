@@ -41,6 +41,7 @@ declare module 'vue' {
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATimeline: typeof import('ant-design-vue/es')['Timeline']
     ATimelineItem: typeof import('ant-design-vue/es')['TimelineItem']
+    ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     LiveHeader: typeof import('./src/components/live-header/index.vue')['default']
     MainLayout: typeof import('./src/components/mainLayout/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
