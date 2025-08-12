@@ -1,6 +1,22 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" theme="light" :trigger="null" collapsible>
+    <a-layout-sider
+        v-model:collapsed="collapsed"
+        theme="light"
+        :trigger="null"
+        collapsible
+        :width="siderWidth"
+        :collapsedWidth="siderCollapsedWidth"
+        :style="{
+    position: 'fixed',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    height: '100vh',
+    overflow: 'auto',
+    zIndex: 100
+  }"
+    >
       <div
           :style="collapsed
     ? 'display: flex; justify-content: center; align-items: center; padding: 16px;'
@@ -120,7 +136,6 @@
           </a-menu-item>
 
 
-
           <a-menu-item key="nyiso">
             <router-link
                 to="/home/newYorkIso"
@@ -161,7 +176,7 @@
           </template>
 
           <router-link
-              to="/home/map"
+              to="/map"
               class="nav-link"
               active-class="nav-link-active">
             <span>Price Map</span>
@@ -434,7 +449,7 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
 } from '@ant-design/icons-vue';
-import { useRouter, useRoute } from 'vue-router'
+import {useRouter, useRoute} from 'vue-router'
 
 const props = defineProps({
   showHeader: Boolean
@@ -448,9 +463,11 @@ const collapsed = ref<boolean>(false);
 
 const route = useRoute()
 
-const isActive = (path : any) => {
+const isActive = (path: any) => {
   return route.path === path
 }
+const siderWidth = 200
+const siderCollapsedWidth = 80
 
 </script>
 <style>

@@ -11,7 +11,8 @@ import midcontinentISO from "@/views/midcontinentISO/index.vue";
 import newYorkIso from "@/views/newYorkIso/index.vue";
 import newEnglandISO from "@/views/newEnglandISO/index.vue";
 import iESO from "@/views/iESO/index.vue";
-import map from "@/views/map/detail/index.vue";
+import map from "@/views/map/index.vue";
+import mapDetail from "@/views/map/detail/index.vue";
 import alerts from "@/views/alerts/index.vue";
 import personalAlerts from "@/views/alerts/personalAlerts/index.vue";
 import alertCreate from "@/views/alerts/personalAlerts/alertCreate/index.vue";
@@ -85,12 +86,7 @@ const staticRoutes: RouteRecordRaw[] = [
                 path: 'iESO',
                 name: 'iESO',
                 component: iESO
-            },
-            {
-                path: "map",
-                name: 'map',
-                component: map
-            },
+            }
 
         ]
     },
@@ -147,7 +143,20 @@ const staticRoutes: RouteRecordRaw[] = [
                 component: eiaDetail
             },
         ]
-    }
+    },
+    {
+        path: "/map",
+        name: 'map',
+        component: map,
+        redirect: '/map/detail',
+        children: [
+            {
+                path: "detail",
+                name: 'mapDetail',
+                component: mapDetail
+            },
+        ]
+    },
 ];
 
 
