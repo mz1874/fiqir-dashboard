@@ -14,7 +14,7 @@ declare module 'vue' {
     ACol: typeof import('ant-design-vue/es')['Col']
     AComment: typeof import('ant-design-vue/es')['Comment']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
-    ADropdown: typeof import('ant-design-vue/es')['Dropdown']
+    ADivider: typeof import('ant-design-vue/es')['Divider']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
     ALayout: typeof import('ant-design-vue/es')['Layout']

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 const timelineData = [
   {
     rank: '#3',
@@ -29,6 +32,10 @@ const timelineData = [
     link: '#'
   }
 ]
+
+const pushPage = ()=> {
+  router.push('/record/detail')
+}
 </script>
 
 <template>
@@ -52,7 +59,7 @@ const timelineData = [
           <span class="value">{{ item.value }}</span>
           <span class="time">{{ item.time }}</span>
         </div>
-        <a-button type="default" class="view-btn" @click="window.open(item.link)">
+        <a-button type="default" class="view-btn" @click="pushPage">
           View Record →
         </a-button>
       </div>
