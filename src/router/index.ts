@@ -18,6 +18,8 @@ import alertCreate from "@/views/alerts/personalAlerts/alertCreate/index.vue";
 import record from "@/views/record/index.vue";
 import recordList from "@/views/record/list/index.vue";
 import recordDetail from "@/views/record/details/index.vue";
+import eia from "@/views/eia/index.vue";
+import eialist from "@/views/eia/list/index.vue";
 
 
 const staticRoutes: RouteRecordRaw[] = [
@@ -124,6 +126,19 @@ const staticRoutes: RouteRecordRaw[] = [
                 path : "detail",
                 name : 'detail',
                 component: recordDetail
+            },
+        ]
+    },
+    {
+        path : "/eia",
+        name : 'eia',
+        component: eia,
+        redirect: '/eia/eiaList',
+        children:[
+            {
+                path : "eiaList",
+                name : 'eiaList',
+                component: eialist
             },
         ]
     }

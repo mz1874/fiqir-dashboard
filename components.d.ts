@@ -42,6 +42,7 @@ declare module 'vue' {
     ATimeline: typeof import('ant-design-vue/es')['Timeline']
     ATimelineItem: typeof import('ant-design-vue/es')['TimelineItem']
     LiveHeader: typeof import('./src/components/live-header/index.vue')['default']
+    MainLayout: typeof import('./src/components/mainLayout/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
