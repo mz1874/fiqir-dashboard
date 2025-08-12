@@ -282,10 +282,20 @@
       </a-menu>
     </a-layout-sider>
 
-    <a-layout>
+    <a-layout :style="{
+        marginLeft: collapsed ? siderCollapsedWidth + 'px' : siderWidth + 'px',
+        transition: 'margin-left 0.2s'
+      }">
       <!--  顶部导航    -->
       <a-layout-header v-if="showHeader"
-                       style="background: #fff; padding: 0 15px; display: flex; align-items: center; justify-content: start; gap: 10px;"
+                       :style="{
+          background: '#fff',
+          padding: '0 15px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          transition: 'margin-left 0.2s'
+        }"
       >
         <router-link
             to="/home/everyWhere"
@@ -408,7 +418,7 @@
 
       <!--   主要内容   -->
       <a-layout-content class="override-style"
-                        :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+                        style="margin: 16px; padding: 24px; background: #fff; min-height: 280px"
       >
         <router-view></router-view>
       </a-layout-content>
@@ -505,6 +515,14 @@ const isActive = (path : any) => {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.fixed-sider {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
 }
 
 </style>

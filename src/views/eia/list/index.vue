@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 const regions = [
   'California (CAL)', 'Carolinas (CAR)', 'Central (CENT)', 'Florida (FLA)',
@@ -20,6 +23,10 @@ const authorities = [
 ]
 
 const searchValue = ref('')
+
+const toDetails = ()=>{
+  router.push(`/eia/detail`)
+}
 </script>
 
 <template>
@@ -48,7 +55,7 @@ const searchValue = ref('')
     <!-- Regions -->
     <a-typography-title :level="4">Regions ({{ regions.length }})</a-typography-title>
     <a-space wrap style="margin-bottom: 24px" :size="[8, 15]">
-      <a-button v-for="region in regions" :key="region">
+      <a-button @click="toDetails" v-for="region in regions" :key="region">
         {{ region }}
       </a-button>
     </a-space>
@@ -56,7 +63,7 @@ const searchValue = ref('')
     <!-- Balancing Authorities -->
     <a-typography-title :level="4">Balancing Authorities ({{ authorities.length }})</a-typography-title>
     <a-space wrap :size="[8, 15]">
-      <a-button v-for="auth in authorities" :key="auth">
+      <a-button  @click="toDetails" v-for="auth in authorities" :key="auth">
         {{ auth }}
       </a-button>
     </a-space>

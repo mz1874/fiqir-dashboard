@@ -509,7 +509,7 @@ watch(activeKey, async (val) => {
 
 
 
-const mapContainerId = 'geojson-map'
+const mapContainerId = 'geojson-detail'
 
 
 const buildMap = () => {

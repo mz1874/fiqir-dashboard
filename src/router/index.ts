@@ -11,7 +11,7 @@ import midcontinentISO from "@/views/midcontinentISO/index.vue";
 import newYorkIso from "@/views/newYorkIso/index.vue";
 import newEnglandISO from "@/views/newEnglandISO/index.vue";
 import iESO from "@/views/iESO/index.vue";
-import map from "@/views/map/index.vue";
+import map from "@/views/map/detail/index.vue";
 import alerts from "@/views/alerts/index.vue";
 import personalAlerts from "@/views/alerts/personalAlerts/index.vue";
 import alertCreate from "@/views/alerts/personalAlerts/alertCreate/index.vue";
@@ -20,6 +20,7 @@ import recordList from "@/views/record/list/index.vue";
 import recordDetail from "@/views/record/details/index.vue";
 import eia from "@/views/eia/index.vue";
 import eialist from "@/views/eia/list/index.vue";
+import eiaDetail from "@/views/eia/detail/index.vue";
 
 
 const staticRoutes: RouteRecordRaw[] = [
@@ -86,22 +87,22 @@ const staticRoutes: RouteRecordRaw[] = [
                 component: iESO
             },
             {
-                path : "map",
-                name : 'map',
+                path: "map",
+                name: 'map',
                 component: map
             },
 
         ]
     },
     {
-        path : "/alerts",
-        name : 'alerts',
+        path: "/alerts",
+        name: 'alerts',
         component: alerts,
         redirect: '/alerts/personalAlerts',
-        children:[
+        children: [
             {
-                path : "personalAlerts",
-                name : 'personalAlerts',
+                path: "personalAlerts",
+                name: 'personalAlerts',
                 component: personalAlerts
             },
             {
@@ -112,41 +113,42 @@ const staticRoutes: RouteRecordRaw[] = [
         ]
     },
     {
-        path : "/record",
-        name : 'record',
+        path: "/record",
+        name: 'record',
         component: record,
         redirect: '/record/recordList',
-        children:[
+        children: [
             {
-                path : "recordList",
-                name : 'recordList',
+                path: "recordList",
+                name: 'recordList',
                 component: recordList
             },
             {
-                path : "detail",
-                name : 'detail',
+                path: "detail",
+                name: 'recordDetail',
                 component: recordDetail
             },
         ]
     },
     {
-        path : "/eia",
-        name : 'eia',
+        path: "/eia",
+        name: 'eia',
         component: eia,
         redirect: '/eia/eiaList',
-        children:[
+        children: [
             {
-                path : "eiaList",
-                name : 'eiaList',
+                path: "eiaList",
+                name: 'eiaList',
                 component: eialist
+            },
+            {
+                path: "detail",
+                name: 'detail',
+                component: eiaDetail
             },
         ]
     }
 ];
-
-
-
-
 
 
 console.log(staticRoutes)
