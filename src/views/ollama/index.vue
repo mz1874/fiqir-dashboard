@@ -99,7 +99,7 @@ onMounted(() => {
       >
         <a-input
             v-model:value="input"
-            placeholder="输入消息或拖拽文件..."
+            placeholder="Please input message or draw file to here ..."
             @keyup.enter="handleSend"
             @paste="handlePaste"
             :disabled="loading"
@@ -109,7 +109,7 @@ onMounted(() => {
 
       <!-- 发送按钮 -->
       <a-button type="primary" @click="handleSend" :loading="loading">
-        发送
+        Send Message
       </a-button>
     </div>
 

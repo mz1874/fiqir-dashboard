@@ -1,5 +1,5 @@
 import {ref} from 'vue';
-import axios from 'axios';
+import instance from '@/api/axios'
 import type {ChatMessage} from '@/interface/ChatMessage';
 import {message as antdMessage} from 'ant-design-vue';
 
@@ -20,7 +20,7 @@ export function useChat() {
         try {
             loading.value = true;
 
-            const response = await axios.post('/api/upload', formData, {
+            const response = await instance.post('/api/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -44,7 +44,7 @@ export function useChat() {
 
     const fetchModels = async () => {
         try {
-            const response = await axios.get(`${ollamaUrl.value}/api/tags`);
+            const response = await instance.get(`${ollamaUrl.value}/api/tags`);
             models.value = response.data.models.map((m: any) => m.name);
             if (!selectedModel.value && models.value.length > 0) {
                 selectedModel.value = models.value[0];
