@@ -10,7 +10,7 @@ const value1 = ref('lucy');
 const inputValue = ref();
 
 // 刷新表格数据
-const refresh = () =>{
+const refresh = () => {
   console.log("刷新")
 }
 
@@ -174,7 +174,180 @@ const buildMap = () => {
 const activeKey = ref('1');
 const dayValue = ref();
 const stackLineChart = ref<HTMLElement | null>(null);
-const stackLineChartOption : echarts.EChartsOption = {
+const renewablesLineChart = ref<HTMLElement | null>(null);
+const loadLineChart = ref<HTMLElement | null>(null);
+const zonalLoadLineChart = ref<HTMLElement | null>(null);
+const outagesChart = ref<HTMLElement | null>(null);
+
+
+const outagesOption: echarts.EChartsOption = {
+  title: {
+    text: 'Stacked Area Chart'
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7985'
+      }
+    }
+  },
+  legend: {
+    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {}
+    }
+  },
+  grid:{
+    left: '5%',
+    right: '5%',
+    top: '15%',
+    bottom: '20%',
+  },
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: false,
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value'
+    }
+  ],
+  series: [
+    {
+      step: 'middle',
+      name: 'Email',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [120, 132, 101, 134, 90, 230, 210]
+    },
+    {
+      step: 'middle',
+      name: 'Union Ads',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [220, 182, 191, 234, 290, 330, 310]
+    },
+    {
+      step: 'middle',
+      name: 'Video Ads',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [150, 232, 201, 154, 190, 330, 410]
+    },
+    {
+      step: 'middle',
+      name: 'Direct',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [320, 332, 301, 334, 390, 330, 320]
+    },
+    {
+      step: 'middle',
+      name: 'Search Engine',
+      type: 'line',
+      stack: 'Total',
+      label: {
+        show: true,
+        position: 'top'
+      },
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [820, 932, 901, 934, 1290, 1330, 1320]
+    }
+  ]
+};
+
+
+const loadLineChartOption: echarts.EChartsOption = {
+  title: {
+    text: 'Load - PJM',
+    top:1,
+    left: 1,
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {
+    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '20%',
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      name: 'Email',
+      type: 'line',
+      stack: 'Total',
+      data: [120, 132, 101, 134, 90, 230, 210]
+    },
+    {
+      name: 'Union Ads',
+      type: 'line',
+      stack: 'Total',
+      data: [220, 182, 191, 234, 290, 330, 310]
+    },
+    {
+      name: 'Video Ads',
+      type: 'line',
+      stack: 'Total',
+      data: [150, 232, 201, 154, 190, 330, 410]
+    },
+    {
+      name: 'Direct',
+      type: 'line',
+      stack: 'Total',
+      data: [320, 332, 301, 334, 390, 330, 320]
+    },
+    {
+      name: 'Search Engine',
+      type: 'line',
+      stack: 'Total',
+      data: [820, 932, 901, 934, 1290, 1330, 1320]
+    }
+  ]
+};
+
+const stackLineChartOption: echarts.EChartsOption = {
   color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
   title: {
     text: 'Fuel Mix - PJM',
@@ -366,7 +539,7 @@ const lineChart = ref<HTMLElement | null>(null);
 const lineChartOptions: echarts.EChartsOption = {
   title: {
     text: 'Locational Marginal Price - PJM',
-    top:0,
+    top: 0,
     left: 'left',
   },
   tooltip: {
@@ -396,7 +569,7 @@ const lineChartOptions: echarts.EChartsOption = {
     axisLabel: {
       formatter: (val: number) => `$${val}`  // 在数字前面加 $
     },
-    offset : 10
+    offset: 10
   },
   series: [
     {
@@ -438,7 +611,6 @@ const lineChartOptions: echarts.EChartsOption = {
 };
 
 
-
 const chartMap = new Map<HTMLElement, ECharts>()
 const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) => {
   if (!domRef) return
@@ -457,6 +629,10 @@ onMounted(() => {
   buildMap();
   renderChart(stackLineChart.value, stackLineChartOption);
   renderChart(lineChart.value, lineChartOptions);
+  renderChart(renewablesLineChart.value, lineChartOptions);
+  renderChart(loadLineChart.value, loadLineChartOption);
+  renderChart(zonalLoadLineChart.value, loadLineChartOption);
+  renderChart(outagesChart.value, outagesOption);
 })
 
 </script>
@@ -492,7 +668,7 @@ onMounted(() => {
                     <span class="status-dot"></span>
                   </a-tooltip>
                 </template>
-                <p><b>87,658</b> <small>MW</small> </p>
+                <p><b>87,658</b> <small>MW</small></p>
               </a-card>
             </a-col>
 
@@ -504,7 +680,7 @@ onMounted(() => {
                     <span class="status-dot"></span>
                   </a-tooltip>
                 </template>
-                <p><b>87,658</b> <small>MW</small> </p>
+                <p><b>87,658</b> <small>MW</small></p>
               </a-card>
             </a-col>
             <a-col :span="6">
@@ -516,7 +692,7 @@ onMounted(() => {
                     <span class="status-dot"></span>
                   </a-tooltip>
                 </template>
-                <p><b>87,658</b> <small>MW</small> </p>
+                <p><b>87,658</b> <small>MW</small></p>
               </a-card>
             </a-col>
             <a-col :span="6">
@@ -527,7 +703,7 @@ onMounted(() => {
                     <span class="status-dot"></span>
                   </a-tooltip>
                 </template>
-                <p><b>87,658</b> <small>MW</small> </p>
+                <p><b>87,658</b> <small>MW</small></p>
               </a-card>
             </a-col>
           </a-row>
@@ -570,7 +746,8 @@ onMounted(() => {
                         @change="handleChange"
                     >
                       <template #suffixIcon>
-                        <<MonitorOutlined />
+                        <
+                        <MonitorOutlined/>
                       </template>
                       <a-select-option value="jack">Jack</a-select-option>
                       <a-select-option value="lucy">Lucy</a-select-option>
@@ -590,7 +767,7 @@ onMounted(() => {
                           @click="refresh"
                       >
                         <template #icon>
-                          <ReloadOutlined />
+                          <ReloadOutlined/>
                         </template>
                       </a-button>
                     </a-tooltip>
@@ -612,6 +789,58 @@ onMounted(() => {
                       class="custom-table"
                   />
 
+                </div>
+
+              </a-col>
+            </a-row>
+
+            <a-row style="margin-top: 20px">
+              <a-col :span="12">
+                <div class="map-container" style="width: 98%;">
+                  <div ref="loadLineChart" class="chart-container" style="width: 100%; height: 400px;"></div>
+                </div>
+              </a-col>
+              <a-col :span="12">
+                <div class="map-container">
+                  <div ref="renewablesLineChart" class="chart-container" style="width: 98%; height: 400px;"></div>
+                </div>
+              </a-col>
+            </a-row>
+
+
+            <a-row style="margin-top: 20px">
+              <a-col :span="12">
+                <div class="map-container" style="width: 98%;">
+                  <div ref="zonalLoadLineChart" class="chart-container" style="width: 100%; height: 400px;"></div>
+                </div>
+              </a-col>
+            </a-row>
+
+
+            <a-row style="margin-top: 20px">
+              <a-col :span="24">
+                <div class="map-container" style="width: 100%;">
+                  <h1>Generation Outages: PJM</h1>
+                  <div ref="outagesChart" class="chart-container" style="width: 100%;"></div>
+                  <a-row style="margin-top: 10px; margin-bottom: 15px">
+                    <a-col :span="24">
+                      <a-select
+                          ref="select"
+                          v-model:value="value1"
+                          style="width: 100%"
+                          @focus="focus"
+                          @change="handleChange"
+                      >
+                        <template #suffixIcon>
+                          <
+                          <MonitorOutlined/>
+                        </template>
+                        <a-select-option value="jack">Jack</a-select-option>
+                        <a-select-option value="lucy">Lucy</a-select-option>
+                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                      </a-select>
+                    </a-col>
+                  </a-row>
                 </div>
 
               </a-col>
@@ -678,15 +907,15 @@ onMounted(() => {
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .map-legend.left {
-  left: 20px;   /* 靠左 */
+  left: 20px; /* 靠左 */
 }
 
 .map-legend.right {
-  right: 20px;  /* 靠右（默认用这个） */
+  right: 20px; /* 靠右（默认用这个） */
 }
 
 .legend-color {
