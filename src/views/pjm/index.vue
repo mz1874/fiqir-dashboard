@@ -3,7 +3,130 @@ import {ref, onMounted} from "vue";
 import {CaretRightOutlined, CaretLeftOutlined} from "@ant-design/icons-vue";
 import * as echarts from 'echarts';
 import type {ECharts} from "echarts";
+import maplibregl from "maplibre-gl";
 
+// Map的定位地点
+const malaysiaPlots = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [101.6869, 3.139], // 吉隆坡
+      },
+      properties: {
+        name: 'Kuala Lumpur',
+        value: 'Some data here',
+      },
+    },
+    {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [100.3354, 5.4141], // 槟城
+      },
+      properties: {
+        name: 'Penang',
+        value: 'Another info here',
+      },
+    },
+  ],
+};
+
+
+const mapContainerId = 'geojson-detail'
+// 构建地图
+const buildMap = () => {
+  const map = new maplibregl.Map({
+    container: mapContainerId,
+    style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+    center: [103.8, 1.5], // 聚焦马来西亚中心
+    zoom: 5,
+  });
+  map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+  map.on('load', async () => {
+    // 加载全球国家数据
+    const world = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson').then(r => r.json());
+    const malaysia = {
+      type: 'FeatureCollection',
+      features: world.features.filter((f: any) => f.properties.ISO_A3 === 'MYS'),
+    };
+    // 加省级边界 GeoJSON
+    const malaysiaADM1 = await fetch('/geoBoundaries-MYS-ADM1_simplified.geojson')
+        .then(r => r.json());
+
+    console.log(malaysiaADM1);
+
+    map.addSource('malaysia-country', {type: 'geojson', data: malaysia as any});
+    map.addSource('malaysia-states', {type: 'geojson', data: malaysiaADM1});
+
+    map.addLayer({
+      id: 'malaysia-fill',
+      type: 'fill',
+      source: 'malaysia-country',
+      paint: {'fill-color': '#f1f3f8', 'fill-opacity': 0.3},
+    });
+    map.addLayer({
+      id: 'state-fill',
+      type: 'fill',
+      source: 'malaysia-states',
+      paint: {'fill-color': '#ffdda0', 'fill-opacity': 0.4},
+    });
+    map.addLayer({
+      id: 'state-outline',
+      type: 'line',
+      source: 'malaysia-states',
+      paint: {'line-color': '#f0a500', 'line-width': 1},
+    });
+
+    // 添加标记点的 GeoJSON 数据源
+    map.addSource('malaysia-plots', {
+      type: 'geojson',
+      data: malaysiaPlots as any,
+    });
+
+// 点图层
+    map.addLayer({
+      id: 'plot-points',
+      type: 'circle',
+      source: 'malaysia-plots',
+      paint: {
+        'circle-radius': 6,
+        'circle-color': '#e63946',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#fff',
+      },
+    });
+
+// 鼠标悬停事件：显示 popup
+    const popup = new maplibregl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+    });
+
+    map.on('mouseenter', 'plot-points', (e: any) => {
+      map.getCanvas().style.cursor = 'pointer';
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const {name, value} = e.features[0].properties;
+
+      popup.setLngLat(coordinates)
+          .setHTML(`<strong>${name}</strong><br/>${value}`)
+          .addTo(map);
+    });
+
+    map.on('mouseleave', 'plot-points', () => {
+      map.getCanvas().style.cursor = '';
+      popup.remove();
+    });
+
+    map.fitBounds(malaysiaADM1.features[0].geometry.coordinates.flat(2).reduce((bounds: any, coord: any) => {
+      bounds.extend(coord);
+      return bounds;
+    }, new maplibregl.LngLatBounds()));
+  });
+}
 
 const activeKey = ref('1');
 const dayValue = ref();
@@ -42,9 +165,9 @@ const stackLineChartOption = {
   ],
   grid: {
     left: 0,
-    right: 0,
+    right: 20,
     top: 50,
-    bottom: 30,
+    bottom: 70,
     containLabel: true
   },
   yAxis: [
@@ -196,6 +319,8 @@ const stackLineChartOption = {
 };
 
 
+
+
 const chartMap = new Map<HTMLElement, ECharts>()
 const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) => {
   if (!domRef) return
@@ -211,6 +336,7 @@ const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) 
 }
 
 onMounted(() => {
+  buildMap();
   renderChart(stackLineChart.value, stackLineChartOption);
 })
 
@@ -222,7 +348,7 @@ onMounted(() => {
     <a-col :span="24">
       <a-tabs v-model:activeKey="activeKey" size="large">
         <!-- 额外内容插槽（在 tab bar 右侧） -->
-        <template #tabBarExtraContent>
+        <template #rightExtra>
           <a-date-picker v-model:value="dayValue"/>
           <a-button @click="decrease" style="margin: 5px">
             <template #icon>
@@ -265,10 +391,16 @@ onMounted(() => {
           <div style="margin-top: 20px">
             <a-row>
               <a-col span="12">
-                <div ref="stackLineChart" style="width: 100%; height: 400px;"></div>
+                <div ref="stackLineChart" class="chart-container" style="width: 98%; height: 400px;"></div>
               </a-col>
               <a-col span="12">
-                2
+                <div class="map-box">
+                  <div class="map-header">
+                    <h1 style="margin-top: 10px">Nodal Price Map</h1>
+                    <a-button>ss</a-button>
+                  </div>
+                  <div :id="mapContainerId" class="map-container"></div>
+                </div>
               </a-col>
             </a-row>
           </div>
@@ -286,4 +418,44 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.map-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;              /* 圆角 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* 阴影 */
+  overflow: hidden;                /* 避免圆角外溢 */
+}
+
+.map-box {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.chart-container {
+  width: 100%;
+  height: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #fff; /* 给阴影对比度 */
+  padding: 10px;
+}
+
+
+
+/* SVG 自适应宽高 */
+.map-container svg {
+  width: 100%;
+  height: 100%;
+}
 </style>
