@@ -1,9 +1,52 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
-import {CaretRightOutlined, CaretLeftOutlined} from "@ant-design/icons-vue";
+import {CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined} from "@ant-design/icons-vue";
 import * as echarts from 'echarts';
 import type {ECharts} from "echarts";
 import maplibregl from "maplibre-gl";
+
+const value1 = ref('lucy');
+
+const inputValue = ref();
+
+// 刷新表格数据
+const refresh = () =>{
+  console.log("刷新")
+}
+
+// 表格数据
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    width: 150,
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    width: 150,
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+  },
+];
+
+const data = [...Array(100)].map((_, i) => ({
+  key: i,
+  name: `Edward King ${i}`,
+  age: 32,
+  address: `London, Park Lane no. ${i}`,
+}));
+
+
+const handleChange = (value: string) => {
+  console.log(`selected ${value}`);
+};
+
+const focus = () => {
+  console.log('focus');
+};
 
 // Map的定位地点
 const malaysiaPlots = {
@@ -131,7 +174,7 @@ const buildMap = () => {
 const activeKey = ref('1');
 const dayValue = ref();
 const stackLineChart = ref<HTMLElement | null>(null);
-const stackLineChartOption = {
+const stackLineChartOption : echarts.EChartsOption = {
   color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
   title: {
     text: 'Fuel Mix - PJM',
@@ -318,6 +361,81 @@ const stackLineChartOption = {
   ]
 };
 
+const lineChart = ref<HTMLElement | null>(null);
+
+const lineChartOptions: echarts.EChartsOption = {
+  title: {
+    text: 'Locational Marginal Price - PJM',
+    top:0,
+    left: 'left',
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {
+    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '15%',
+    containLabel: true
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      formatter: (val: number) => `$${val}`  // 在数字前面加 $
+    },
+    offset : 10
+  },
+  series: [
+    {
+      step: 'end',
+      name: 'Email',
+      type: 'line',
+      stack: 'Total',
+      data: [120, 132, 101, 134, 90, 230, 210]
+    },
+    {
+      step: 'end',
+      name: 'Union Ads',
+      type: 'line',
+      stack: 'Total',
+      data: [220, 182, 191, 234, 290, 330, 310]
+    },
+    {
+      step: 'end',
+      name: 'Video Ads',
+      type: 'line',
+      stack: 'Total',
+      data: [150, 232, 201, 154, 190, 330, 410]
+    },
+    {
+      step: 'end',
+      name: 'Direct',
+      type: 'line',
+      stack: 'Total',
+      data: [320, 332, 301, 334, 390, 330, 320]
+    },
+    {
+      step: 'end',
+      name: 'Search Engine',
+      type: 'line',
+      stack: 'Total',
+      data: [820, 932, 901, 934, 1290, 1330, 1320]
+    }
+  ]
+};
 
 
 
@@ -338,6 +456,7 @@ const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) 
 onMounted(() => {
   buildMap();
   renderChart(stackLineChart.value, stackLineChartOption);
+  renderChart(lineChart.value, lineChartOptions);
 })
 
 </script>
@@ -366,23 +485,49 @@ onMounted(() => {
         <a-tab-pane key="1" tab="Prices">
           <a-row>
             <a-col :span="6">
-              <a-card size="small" title="Load" :bordered="true">
-                <p>card content</p>
+              <a-card size="small" :bordered="true">
+                <template #title>
+                  Load
+                  <a-tooltip title="update 3 mins ago">
+                    <span class="status-dot"></span>
+                  </a-tooltip>
+                </template>
+                <p><b>87,658</b> <small>MW</small> </p>
+              </a-card>
+            </a-col>
+
+            <a-col :span="6">
+              <a-card size="small" :bordered="true">
+                <template #title>
+                  Net Load
+                  <a-tooltip title="update 3 mins ago">
+                    <span class="status-dot"></span>
+                  </a-tooltip>
+                </template>
+                <p><b>87,658</b> <small>MW</small> </p>
               </a-card>
             </a-col>
             <a-col :span="6">
-              <a-card size="small" title="Net Load" :bordered="true">
-                <p>card content</p>
+
+              <a-card size="small" :bordered="true">
+                <template #title>
+                  Price
+                  <a-tooltip title="update 3 mins ago">
+                    <span class="status-dot"></span>
+                  </a-tooltip>
+                </template>
+                <p><b>87,658</b> <small>MW</small> </p>
               </a-card>
             </a-col>
             <a-col :span="6">
-              <a-card size="small" title="Price" :bordered="true">
-                <p>card content</p>
-              </a-card>
-            </a-col>
-            <a-col :span="6">
-              <a-card size="small" title="Main Source" :bordered="true">
-                <p>card content</p>
+              <a-card size="small" :bordered="true">
+                <template #title>
+                  Main Source
+                  <a-tooltip title="update 3 mins ago">
+                    <span class="status-dot"></span>
+                  </a-tooltip>
+                </template>
+                <p><b>87,658</b> <small>MW</small> </p>
               </a-card>
             </a-col>
           </a-row>
@@ -400,7 +545,75 @@ onMounted(() => {
                     <a-button>ss</a-button>
                   </div>
                   <div :id="mapContainerId" class="map-container"></div>
+
+                  <!-- 图例 -->
+                  <div class="map-legend">
+                    <b>$/MWH</b>
+                    <div><span class="legend-color" style="background:#f1f3f8"></span> Country</div>
+                    <div><span class="legend-color" style="background:#ffdda0"></span> State</div>
+                    <div><span class="legend-color" style="background:#e63946"></span> Plot Point</div>
+                  </div>
                 </div>
+              </a-col>
+            </a-row>
+
+            <a-row style="margin-top: 20px">
+              <a-col span="12">
+                <div ref="lineChart" class="chart-container" style="width: 98%; height: 400px;"></div>
+                <a-row style="margin-top: 10px">
+                  <a-col :span="24">
+                    <a-select
+                        ref="select"
+                        v-model:value="value1"
+                        style="width: 98%"
+                        @focus="focus"
+                        @change="handleChange"
+                    >
+                      <template #suffixIcon>
+                        <<MonitorOutlined />
+                      </template>
+                      <a-select-option value="jack">Jack</a-select-option>
+                      <a-select-option value="lucy">Lucy</a-select-option>
+                      <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                    </a-select>
+                  </a-col>
+                </a-row>
+              </a-col>
+              <a-col :span="12">
+                <div class="chart-container" style="height: 440px">
+                  <h3 style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                    5-Minute Real-Time LMP
+                    <a-tooltip title="Refresh">
+                      <a-button
+                          type="text"
+                          size="small"
+                          @click="refresh"
+                      >
+                        <template #icon>
+                          <ReloadOutlined />
+                        </template>
+                      </a-button>
+                    </a-tooltip>
+                  </h3>
+                  <a-flex justify="space-between" align="center" style="width: 100%">
+                    <label style="white-space: nowrap;">Interval End: 2025-08-27 12:45 PM EDT</label>
+                    <a-input
+                        v-model:value="inputValue"
+                        placeholder="Search location"
+                        allow-clear
+                        style="width: 200px"
+                    />
+                  </a-flex>
+                  <a-table
+                      :columns="columns"
+                      :data-source="data"
+                      :pagination="false"
+                      :scroll="{ y: 300 }"
+                      class="custom-table"
+                  />
+
+                </div>
+
               </a-col>
             </a-row>
           </div>
@@ -421,15 +634,15 @@ onMounted(() => {
 .map-container {
   width: 100%;
   height: 100%;
-  border-radius: 8px;              /* 圆角 */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* 阴影 */
-  overflow: hidden;                /* 避免圆角外溢 */
+  border-radius: 8px; /* 圆角 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 阴影 */
+  overflow: hidden; /* 避免圆角外溢 */
 }
 
 .map-box {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -446,16 +659,58 @@ onMounted(() => {
   width: 100%;
   height: 400px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: #fff; /* 给阴影对比度 */
   padding: 10px;
 }
-
 
 
 /* SVG 自适应宽高 */
 .map-container svg {
   width: 100%;
   height: 100%;
+}
+
+.map-legend {
+  position: absolute;
+  bottom: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.map-legend.left {
+  left: 20px;   /* 靠左 */
+}
+
+.map-legend.right {
+  right: 20px;  /* 靠右（默认用这个） */
+}
+
+.legend-color {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background-color: #52c41a; /* 绿色 */
+  cursor: pointer;
+}
+
+:deep(.custom-table .ant-table-pagination.ant-table-pagination-bottom) {
+  margin-top: 40px !important;
+  /* 或者使用 transform，避免改变布局流 */
+  /* transform: translateY(40px) !important; */
 }
 </style>
