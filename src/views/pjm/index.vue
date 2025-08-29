@@ -4,9 +4,9 @@ import {CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined} 
 import * as echarts from 'echarts';
 import type {ECharts} from "echarts";
 import maplibregl from "maplibre-gl";
-import getPJMFuelMixData from "@/api/pjwApi";
+import {getPJMFuelMixData, getLocationalMarginalPrice} from "@/api/pjwApi";
 
-const value1 = ref('lucy');
+const lineChartOption = ref('DPL');
 
 const inputValue = ref();
 
@@ -202,7 +202,7 @@ const outagesOption: echarts.EChartsOption = {
       saveAsImage: {}
     }
   },
-  grid:{
+  grid: {
     left: '5%',
     right: '5%',
     top: '15%',
@@ -287,7 +287,7 @@ const outagesOption: echarts.EChartsOption = {
 const loadLineChartOption: echarts.EChartsOption = {
   title: {
     text: 'Load - PJM',
-    top:1,
+    top: 1,
     left: 1,
   },
   tooltip: {
@@ -415,7 +415,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [0, 232, 101, 264, 90, 340, 250]
     },
     {
@@ -440,7 +440,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [120, 0, 111, 234, 220, 340, 310]
     },
     {
@@ -465,7 +465,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [320, 132, 201, 334, 190, 130, 220]
     },
     {
@@ -521,7 +521,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -550,7 +550,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -579,7 +579,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -608,7 +608,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -637,7 +637,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -666,7 +666,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -695,86 +695,14 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: { disabled: true },
+      emphasis: {disabled: true},
     },
   ]
 };
 
 const lineChart = ref<HTMLElement | null>(null);
 
-const lineChartOptions: echarts.EChartsOption = {
-  title: {
-    text: 'Locational Marginal Price - PJM',
-    top: 0,
-    left: 'left',
-  },
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {
-    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
-  },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '15%',
-    containLabel: true
-  },
-  toolbox: {
-    feature: {
-      saveAsImage: {}
-    }
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: {
-      formatter: (val: number) => `$${val}`  // 在数字前面加 $
-    },
-    offset: 10
-  },
-  series: [
-    {
-      step: 'end',
-      name: 'Email',
-      type: 'line',
-      stack: 'Total',
-      data: [120, 132, 101, 134, 90, 230, 210]
-    },
-    {
-      step: 'end',
-      name: 'Union Ads',
-      type: 'line',
-      stack: 'Total',
-      data: [220, 182, 191, 234, 290, 330, 310]
-    },
-    {
-      step: 'end',
-      name: 'Video Ads',
-      type: 'line',
-      stack: 'Total',
-      data: [150, 232, 201, 154, 190, 330, 410]
-    },
-    {
-      step: 'end',
-      name: 'Direct',
-      type: 'line',
-      stack: 'Total',
-      data: [320, 332, 301, 334, 390, 330, 320]
-    },
-    {
-      step: 'end',
-      name: 'Search Engine',
-      type: 'line',
-      stack: 'Total',
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
-    }
-  ]
-};
+
 
 
 const chartMap = new Map<HTMLElement, ECharts>()
@@ -791,16 +719,19 @@ const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) 
   instance.resize()
 }
 
-onMounted(() => {
-  buildMap();
+const start = new Date().toISOString().split("T")[0];  // 今天
+const end = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0]; // 明天
+/**
+ * 获取第一个堆叠图
+ */
+function fetchStackLineChart() {
 
-  const res = getPJMFuelMixData("2025-08-27", "2025-08-30", "market");
-  res.then(data =>{
+  const res = getPJMFuelMixData(start, end, "market")
+  res.then(data => {
     // X 轴
     const xAxisData = data.data.data.map((item: any) => item.interval_start_local);
-
     // 对应 series 的能源字段
-    const fuels = ["coal", "gas", "nuclear", "wind", "solar","hydro", "multiple_fuels", "oil", "storage", "other", "other_renewables"];
+    const fuels = ["coal", "gas", "nuclear", "wind", "solar", "hydro", "multiple_fuels", "oil", "storage", "other", "other_renewables"];
     stackLineChartOption.legend!.data = fuels;
     // 更新已有 option，而不是重建
     stackLineChartOption.xAxis[0].data = xAxisData;
@@ -817,10 +748,72 @@ onMounted(() => {
   }).catch(error => {
     console.log(error)
   })
+}
 
 
-  renderChart(lineChart.value, lineChartOptions);
-  renderChart(renewablesLineChart.value, lineChartOptions);
+function fetchLinesChart() {
+  const res = getLocationalMarginalPrice(start, end, "market", lineChartOption.value);
+  res.then(data => {
+    const xAxisData = data.data.data.map(item => item.interval_start_local); // 横坐标用 local 时间
+    const lmpData = data.data.data.map(item => item.lmp); // 纵坐标用 lmp
+    const lineChartOptions: echarts.EChartsOption = {
+      title: {
+        text: 'Locational Marginal Price - PJM',
+        top: 0,
+        left: 'left',
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: ['Day Ahead']   // 只画 LMP
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '15%',
+        containLabel: true
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: xAxisData   // 时间
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: (val: number) => `$${val.toFixed(2)}`  // 保留两位小数
+        },
+        offset: 10
+      },
+      series: [
+        {
+          name: 'Day Ahead',
+          type: 'line',
+          step: 'end',
+          data: lmpData
+        }
+      ]
+    };
+    renderChart(lineChart.value, lineChartOptions);
+  }).catch(error => {
+
+  })
+}
+
+onMounted(() => {
+  buildMap();
+  fetchStackLineChart(); // 立即调用
+
+  setTimeout(() => {
+    fetchLinesChart(); // 1秒后调用
+  }, 2000);
+  // renderChart(renewablesLineChart.value, lineChartOptions);
   renderChart(loadLineChart.value, loadLineChartOption);
   renderChart(zonalLoadLineChart.value, loadLineChartOption);
   renderChart(outagesChart.value, outagesOption);
@@ -931,7 +924,7 @@ onMounted(() => {
                   <a-col :span="24">
                     <a-select
                         ref="select"
-                        v-model:value="value1"
+                        v-model:value="lineChartOption"
                         style="width: 98%"
                         @focus="focus"
                         @change="handleChange"
@@ -940,9 +933,43 @@ onMounted(() => {
                         <
                         <MonitorOutlined/>
                       </template>
-                      <a-select-option value="jack">Jack</a-select-option>
-                      <a-select-option value="lucy">Lucy</a-select-option>
-                      <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                      <a-select-option value="AECO">AECO</a-select-option>
+                      <a-select-option value="AEP">AEP</a-select-option>
+                      <a-select-option value="AEP-DAYTON HUB">AEP-DAYTON HUB</a-select-option>
+                      <a-select-option value="AEP GEN HUB">AEP GEN HUB</a-select-option>
+                      <a-select-option value="APS">APS</a-select-option>
+                      <a-select-option value="ATSI">ATSI</a-select-option>
+                      <a-select-option value="ATSI GEN HUB">ATSI GEN HUB</a-select-option>
+                      <a-select-option value="BGE">BGE</a-select-option>
+                      <a-select-option value="CHICAGO GEN HUB">CHICAGO GEN HUB</a-select-option>
+                      <a-select-option value="CHICAGO HUB">CHICAGO HUB</a-select-option>
+                      <a-select-option value="COMED">COMED</a-select-option>
+                      <a-select-option value="DAY">DAY</a-select-option>
+                      <a-select-option value="DEOK">DEOK</a-select-option>
+                      <a-select-option value="DOM">DOM</a-select-option>
+                      <a-select-option value="DOMINION HUB">DOMINION HUB</a-select-option>
+                      <a-select-option value="DPL">DPL</a-select-option>
+                      <a-select-option value="DUQ">DUQ</a-select-option>
+                      <a-select-option value="EASTERN HUB">EASTERN HUB</a-select-option>
+                      <a-select-option value="EKPC">EKPC</a-select-option>
+                      <a-select-option value="JCPL">JCPL</a-select-option>
+                      <a-select-option value="METED">METED</a-select-option>
+                      <a-select-option value="NEW JERSEY HUB">NEW JERSEY HUB</a-select-option>
+                      <a-select-option value="N ILLINOIS HUB">N ILLINOIS HUB</a-select-option>
+                      <a-select-option value="OHIO HUB">OHIO HUB</a-select-option>
+                      <a-select-option value="OVEC">OVEC</a-select-option>
+                      <a-select-option value="PECO">PECO</a-select-option>
+                      <a-select-option value="PENELEC">PENELEC</a-select-option>
+                      <a-select-option value="PEPCO">PEPCO</a-select-option>
+                      <a-select-option value="PJM-RTO">PJM-RTO</a-select-option>
+                      <a-select-option value="PPL">PPL</a-select-option>
+                      <a-select-option value="PSEG">PSEG</a-select-option>
+                      <a-select-option value="RECO">RECO</a-select-option>
+                      <a-select-option value="WESTERN HUB">WESTERN HUB</a-select-option>
+                      <a-select-option value="WEST INT HUB">WEST INT HUB</a-select-option>
+                      <a-select-option value="NYIS">NYIS</a-select-option>
+                      <a-select-option value="MISO">MISO</a-select-option>
+                      <a-select-option value="ONTARIO">ONTARIO</a-select-option>
                     </a-select>
                   </a-col>
                 </a-row>
@@ -1026,9 +1053,43 @@ onMounted(() => {
                           <
                           <MonitorOutlined/>
                         </template>
-                        <a-select-option value="jack">Jack</a-select-option>
-                        <a-select-option value="lucy">Lucy</a-select-option>
-                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                        <a-select-option value="AECO">AECO</a-select-option>
+                        <a-select-option value="AEP">AEP</a-select-option>
+                        <a-select-option value="AEP-DAYTON HUB">AEP-DAYTON HUB</a-select-option>
+                        <a-select-option value="AEP GEN HUB">AEP GEN HUB</a-select-option>
+                        <a-select-option value="APS">APS</a-select-option>
+                        <a-select-option value="ATSI">ATSI</a-select-option>
+                        <a-select-option value="ATSI GEN HUB">ATSI GEN HUB</a-select-option>
+                        <a-select-option value="BGE">BGE</a-select-option>
+                        <a-select-option value="CHICAGO GEN HUB">CHICAGO GEN HUB</a-select-option>
+                        <a-select-option value="CHICAGO HUB">CHICAGO HUB</a-select-option>
+                        <a-select-option value="COMED">COMED</a-select-option>
+                        <a-select-option value="DAY">DAY</a-select-option>
+                        <a-select-option value="DEOK">DEOK</a-select-option>
+                        <a-select-option value="DOM">DOM</a-select-option>
+                        <a-select-option value="DOMINION HUB">DOMINION HUB</a-select-option>
+                        <a-select-option value="DPL">DPL</a-select-option>
+                        <a-select-option value="DUQ">DUQ</a-select-option>
+                        <a-select-option value="EASTERN HUB">EASTERN HUB</a-select-option>
+                        <a-select-option value="EKPC">EKPC</a-select-option>
+                        <a-select-option value="JCPL">JCPL</a-select-option>
+                        <a-select-option value="METED">METED</a-select-option>
+                        <a-select-option value="NEW JERSEY HUB">NEW JERSEY HUB</a-select-option>
+                        <a-select-option value="N ILLINOIS HUB">N ILLINOIS HUB</a-select-option>
+                        <a-select-option value="OHIO HUB">OHIO HUB</a-select-option>
+                        <a-select-option value="OVEC">OVEC</a-select-option>
+                        <a-select-option value="PECO">PECO</a-select-option>
+                        <a-select-option value="PENELEC">PENELEC</a-select-option>
+                        <a-select-option value="PEPCO">PEPCO</a-select-option>
+                        <a-select-option value="PJM-RTO">PJM-RTO</a-select-option>
+                        <a-select-option value="PPL">PPL</a-select-option>
+                        <a-select-option value="PSEG">PSEG</a-select-option>
+                        <a-select-option value="RECO">RECO</a-select-option>
+                        <a-select-option value="WESTERN HUB">WESTERN HUB</a-select-option>
+                        <a-select-option value="WEST INT HUB">WEST INT HUB</a-select-option>
+                        <a-select-option value="NYIS">NYIS</a-select-option>
+                        <a-select-option value="MISO">MISO</a-select-option>
+                        <a-select-option value="ONTARIO">ONTARIO</a-select-option>
                       </a-select>
                     </a-col>
                   </a-row>
