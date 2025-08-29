@@ -4,6 +4,7 @@ import {CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined} 
 import * as echarts from 'echarts';
 import type {ECharts} from "echarts";
 import maplibregl from "maplibre-gl";
+import getPJMFuelMixData from "@/api/pjwApi";
 
 const value1 = ref('lucy');
 
@@ -414,9 +415,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {
-        focus: 'series'
-      },
+      emphasis: { disabled: true },
       data: [0, 232, 101, 264, 90, 340, 250]
     },
     {
@@ -441,9 +440,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {
-        focus: 'series'
-      },
+      emphasis: { disabled: true },
       data: [120, 0, 111, 234, 220, 340, 310]
     },
     {
@@ -468,9 +465,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {
-        focus: 'series'
-      },
+      emphasis: { disabled: true },
       data: [320, 132, 201, 334, 190, 130, 220]
     },
     {
@@ -510,7 +505,7 @@ const stackLineChartOption: echarts.EChartsOption = {
       },
       showSymbol: false,
       label: {
-        show: true,
+        show: false,
         position: 'top'
       },
       areaStyle: {
@@ -526,11 +521,182 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {
-        focus: 'series'
-      },
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
-    }
+    },
+    {
+      name: 'Line 6',
+      type: 'line',
+      stack: 'Total',
+      smooth: true,
+      lineStyle: {
+        width: 0
+      },
+      showSymbol: false,
+      label: {
+        show: false,
+        position: 'top'
+      },
+      areaStyle: {
+        opacity: 0.8,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: 'rgb(255, 191, 0)'
+          },
+          {
+            offset: 1,
+            color: 'rgb(224, 62, 76)'
+          }
+        ])
+      },
+      emphasis: { disabled: true },
+      data: [999, 302, 181, 234, 210, 290, 150]
+    },
+    {
+      name: 'Line 6',
+      type: 'line',
+      stack: 'Total',
+      smooth: true,
+      lineStyle: {
+        width: 0
+      },
+      showSymbol: false,
+      label: {
+        show: false,
+        position: 'top'
+      },
+      areaStyle: {
+        opacity: 0.8,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: 'rgb(255, 191, 0)'
+          },
+          {
+            offset: 1,
+            color: 'rgb(224, 62, 76)'
+          }
+        ])
+      },
+      emphasis: { disabled: true },
+      data: [999, 302, 181, 234, 210, 290, 150]
+    },
+    {
+      name: 'Line 6',
+      type: 'line',
+      stack: 'Total',
+      smooth: true,
+      lineStyle: {
+        width: 0
+      },
+      showSymbol: false,
+      label: {
+        show: false,
+        position: 'top'
+      },
+      areaStyle: {
+        opacity: 0.8,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: 'rgb(255, 191, 0)'
+          },
+          {
+            offset: 1,
+            color: 'rgb(224, 62, 76)'
+          }
+        ])
+      },
+      emphasis: { disabled: true },
+      data: [999, 302, 181, 234, 210, 290, 150]
+    },
+    {
+      name: 'Line 6',
+      type: 'line',
+      stack: 'Total',
+      smooth: true,
+      lineStyle: {
+        width: 0
+      },
+      showSymbol: false,
+      label: {
+        show: false,
+        position: 'top'
+      },
+      areaStyle: {
+        opacity: 0.8,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: 'rgb(255, 191, 0)'
+          },
+          {
+            offset: 1,
+            color: 'rgb(224, 62, 76)'
+          }
+        ])
+      },
+      emphasis: { disabled: true },
+      data: [999, 302, 181, 234, 210, 290, 150]
+    },
+    {
+      name: 'Line 6',
+      type: 'line',
+      stack: 'Total',
+      smooth: true,
+      lineStyle: {
+        width: 0
+      },
+      showSymbol: false,
+      label: {
+        show: false,
+        position: 'top'
+      },
+      areaStyle: {
+        opacity: 0.8,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: 'rgb(255, 191, 0)'
+          },
+          {
+            offset: 1,
+            color: 'rgb(224, 62, 76)'
+          }
+        ])
+      },
+      emphasis: { disabled: true },
+      data: [999, 302, 181, 234, 210, 290, 150]
+    },
+    {
+      name: 'Line 11',
+      type: 'line',
+      stack: 'Total',
+      smooth: true,
+      lineStyle: {
+        width: 0
+      },
+      showSymbol: false,
+      label: {
+        show: false,
+        position: 'top'
+      },
+      areaStyle: {
+        opacity: 0.8,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: 'rgb(255, 191, 0)'
+          },
+          {
+            offset: 1,
+            color: 'rgb(224, 62, 76)'
+          }
+        ])
+      },
+      emphasis: { disabled: true },
+    },
   ]
 };
 
@@ -627,7 +793,32 @@ const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) 
 
 onMounted(() => {
   buildMap();
-  renderChart(stackLineChart.value, stackLineChartOption);
+
+  const res = getPJMFuelMixData("2025-08-27", "2025-08-30", "market");
+  res.then(data =>{
+    // X 轴
+    const xAxisData = data.data.data.map((item: any) => item.interval_start_local);
+
+    // 对应 series 的能源字段
+    const fuels = ["coal", "gas", "nuclear", "wind", "solar","hydro", "multiple_fuels", "oil", "storage", "other", "other_renewables"];
+    stackLineChartOption.legend!.data = fuels;
+    // 更新已有 option，而不是重建
+    stackLineChartOption.xAxis[0].data = xAxisData;
+    fuels.forEach((fuel, index) => {
+      if (stackLineChartOption.series[index]) {
+        stackLineChartOption.series[index].name = fuel; // 改 legend 名称
+        stackLineChartOption.series[index].data = data.data.data.map(
+            (item: any) => item[fuel] ?? 0
+        );
+      }
+    });
+    renderChart(stackLineChart.value, stackLineChartOption);
+
+  }).catch(error => {
+    console.log(error)
+  })
+
+
   renderChart(lineChart.value, lineChartOptions);
   renderChart(renewablesLineChart.value, lineChartOptions);
   renderChart(loadLineChart.value, loadLineChartOption);
