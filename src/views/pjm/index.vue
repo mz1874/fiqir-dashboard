@@ -4,7 +4,7 @@ import {CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined} 
 import * as echarts from 'echarts';
 import type {ECharts} from "echarts";
 import maplibregl from "maplibre-gl";
-import {getPJMFuelMixData, getLocationalMarginalPrice} from "@/api/pjwApi";
+import {getPJMFuelMixData, getLocationalMarginalPrice, getLocationalLMP} from "@/api/pjwApi";
 
 const lineChartOption = ref('DPL');
 
@@ -12,38 +12,63 @@ const inputValue = ref();
 
 // 刷新表格数据
 const refresh = () => {
-  console.log("刷新")
+  fetchLinesTable("market");
 }
 
 // 表格数据
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
+    title: 'Location',
+    dataIndex: 'location',
     width: 150,
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
+    title: 'Location short name',
+    dataIndex: 'location_short_name',
     width: 150,
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
+    title: 'Location Type',
+    dataIndex: 'location_type',
+    width: 100,
+  },
+  {
+    title: 'LMP',
+    dataIndex: 'lmp',
+    width: 100,
+    sorter: (a: any, b: any) => a.lmp - b.lmp,
+  },
+  {
+    title: 'Energy',
+    dataIndex: 'energy',
+    width: 100,
+  },
+  {
+    title: 'Congestion',
+    dataIndex: 'congestion',
+    width: 120,
+  },
+  {
+    title: 'Loss',
+    dataIndex: 'loss',
+    width: 100,
+  },
+
+  {
+    title: 'Interval Start',
+    dataIndex: 'interval_start_local',
+    width: 200,
   },
 ];
 
-const data = [...Array(100)].map((_, i) => ({
-  key: i,
-  name: `Edward King ${i}`,
-  age: 32,
-  address: `London, Park Lane no. ${i}`,
-}));
+
+
+const tableData = ref<any[]>([]);
 
 
 const handleChange = (value: string) => {
-  console.log(`selected ${value}`);
-};
+  fetchLinesChart(value);
+}
 
 const focus = () => {
   console.log('focus');
@@ -751,8 +776,8 @@ function fetchStackLineChart() {
 }
 
 
-function fetchLinesChart() {
-  const res = getLocationalMarginalPrice(start, end, "market", lineChartOption.value);
+function fetchLinesChart(option : String = "DPL") {
+  const res = getLocationalMarginalPrice(start, end, "market", option);
   res.then(data => {
     const xAxisData = data.data.data.map(item => item.interval_start_local); // 横坐标用 local 时间
     const lmpData = data.data.data.map(item => item.lmp); // 纵坐标用 lmp
@@ -806,14 +831,67 @@ function fetchLinesChart() {
   })
 }
 
+function formatTime(date: Date, timezone: string): string {
+  if (timezone === "UTC") {
+    return date.toISOString(); // ✅ 直接输出 UTC 时间
+  }
+
+  if (timezone === "market") {
+    const parts = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).formatToParts(date);
+
+    const map: any = {};
+    parts.forEach(p => { if (p.type !== "literal") map[p.type] = p.value; });
+    const local = `${map.year}-${map.month}-${map.day}T${map.hour}:${map.minute}:${map.second}`;
+
+    // 算偏移
+    const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
+    const marketDate = new Date(date.toLocaleString("en-US", { timeZone: "America/New_York" }));
+    const offsetMinutes = (marketDate.getTime() - utcDate.getTime()) / (60 * 1000);
+    const sign = offsetMinutes >= 0 ? "+" : "-";
+    const absMinutes = Math.abs(offsetMinutes);
+    const hh = String(Math.floor(absMinutes / 60)).padStart(2, "0");
+    const mm = String(absMinutes % 60).padStart(2, "0");
+
+    return `${local}${sign}${hh}:${mm}`;
+  }
+
+  throw new Error(`Unsupported timezone: ${timezone}`);
+}
+
+
+function fetchLinesTable(timezone: string = "UTC") {
+  const now = new Date();
+  const fiveMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+
+  const endTime = formatTime(now, timezone);
+  const startTime = formatTime(fiveMinutesAgo, timezone);
+
+  const res = getLocationalLMP(startTime, endTime, timezone);
+  res.then(data => {
+    console.log(data.data, "&&&&&&&&&&&&&&");
+    tableData.value = data.data.data;
+  }).catch(error => {
+    console.error("Error fetching table data:", error);
+  });
+}
 onMounted(() => {
   buildMap();
-  fetchStackLineChart(); // 立即调用
-
-  setTimeout(() => {
-    fetchLinesChart(); // 1秒后调用
-  }, 2000);
+  // fetchStackLineChart(); // 立即调用
+  //
+  // setTimeout(() => {
+  //   fetchLinesChart(); // 1秒后调用
+  // }, 2000);
   // renderChart(renewablesLineChart.value, lineChartOptions);
+  fetchLinesTable("market");
   renderChart(loadLineChart.value, loadLineChartOption);
   renderChart(zonalLoadLineChart.value, loadLineChartOption);
   renderChart(outagesChart.value, outagesOption);
@@ -1001,7 +1079,7 @@ onMounted(() => {
                   </a-flex>
                   <a-table
                       :columns="columns"
-                      :data-source="data"
+                      :data-source="tableData"
                       :pagination="false"
                       :scroll="{ y: 300 }"
                       class="custom-table"

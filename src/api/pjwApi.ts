@@ -31,3 +31,16 @@ export function getLocationalMarginalPrice(start: string, end: string, timezone:
         },
     });
 }
+
+
+export function getLocationalLMP(start: string, end: string, timezone: string) {
+    return axios.get("https://api.gridstatus.io/v1/datasets/pjm_lmp_real_time_5_min/query", {
+        params: {
+            start_time: start,
+            end_time: end,
+            timezone: timezone,
+            api_key: API_KEY,
+            page_size: 100,
+        },
+    });
+}
