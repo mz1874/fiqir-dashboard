@@ -877,7 +877,6 @@ function fetchLinesTable(timezone: string = "UTC") {
 
   const res = getLocationalLMP(startTime, endTime, timezone);
   res.then(data => {
-    console.log(data.data, "&&&&&&&&&&&&&&");
     tableData.value = data.data.data;
   }).catch(error => {
     console.error("Error fetching table data:", error);
