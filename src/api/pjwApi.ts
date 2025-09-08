@@ -19,15 +19,15 @@ export function getPJMFuelMixData(start: string, end: string, timezone: string) 
     });
 }
 
-export function getLocationalMarginalPrice(start: string, end: string, timezone: string ,filter_value : string) {
+export function getLocationalMarginalPrice(start: string, end: string, timezone: string, filter_value: string) {
     return axios.get("https://api.gridstatus.io/v1/datasets/pjm_lmp_day_ahead_hourly/query", {
         params: {
             start_time: start,
             end_time: end,
             timezone: timezone,
             api_key: API_KEY,
-            filter_column : "location",
-            filter_value :filter_value
+            filter_column: "location",
+            filter_value: filter_value
         },
     });
 }
@@ -41,6 +41,17 @@ export function getLocationalLMP(start: string, end: string, timezone: string) {
             timezone: timezone,
             api_key: API_KEY,
             page_size: 100,
+        },
+    });
+}
+
+export function getStandardized5MinData(start: string, end: string, timezone: string) {
+    return axios.get("https://api.gridstatus.io/v1/datasets/pjm_standardized_5_min/query", {
+        params: {
+            start_time: start,
+            end_time: end,
+            timezone: timezone,
+            api_key: API_KEY,
         },
     });
 }

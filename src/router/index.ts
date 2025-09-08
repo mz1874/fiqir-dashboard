@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, type RouteRecordRaw} from 'vue-router';
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router';
 import home from "@/views/home/index.vue";
 import ollama from "@/views/ollama/index.vue";
 import editor from "@/views/editor/index.vue";

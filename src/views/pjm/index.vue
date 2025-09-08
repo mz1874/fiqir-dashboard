@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {ref, onMounted} from "vue";
-import {CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined} from "@ant-design/icons-vue";
+import { ref, onMounted } from "vue";
+import { CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined } from "@ant-design/icons-vue";
 import * as echarts from 'echarts';
-import type {ECharts} from "echarts";
+import type { ECharts } from "echarts";
 import maplibregl from "maplibre-gl";
-import {getPJMFuelMixData, getLocationalMarginalPrice, getLocationalLMP} from "@/api/pjwApi";
+import { getPJMFuelMixData, getLocationalMarginalPrice, getLocationalLMP, getStandardized5MinData } from "@/api/pjwApi";
 
 const lineChartOption = ref('DPL');
 
@@ -124,30 +124,30 @@ const buildMap = () => {
     };
     // 加省级边界 GeoJSON
     const malaysiaADM1 = await fetch('/geoBoundaries-MYS-ADM1_simplified.geojson')
-        .then(r => r.json());
+      .then(r => r.json());
 
     console.log(malaysiaADM1);
 
-    map.addSource('malaysia-country', {type: 'geojson', data: malaysia as any});
-    map.addSource('malaysia-states', {type: 'geojson', data: malaysiaADM1});
+    map.addSource('malaysia-country', { type: 'geojson', data: malaysia as any });
+    map.addSource('malaysia-states', { type: 'geojson', data: malaysiaADM1 });
 
     map.addLayer({
       id: 'malaysia-fill',
       type: 'fill',
       source: 'malaysia-country',
-      paint: {'fill-color': '#f1f3f8', 'fill-opacity': 0.3},
+      paint: { 'fill-color': '#f1f3f8', 'fill-opacity': 0.3 },
     });
     map.addLayer({
       id: 'state-fill',
       type: 'fill',
       source: 'malaysia-states',
-      paint: {'fill-color': '#ffdda0', 'fill-opacity': 0.4},
+      paint: { 'fill-color': '#ffdda0', 'fill-opacity': 0.4 },
     });
     map.addLayer({
       id: 'state-outline',
       type: 'line',
       source: 'malaysia-states',
-      paint: {'line-color': '#f0a500', 'line-width': 1},
+      paint: { 'line-color': '#f0a500', 'line-width': 1 },
     });
 
     // 添加标记点的 GeoJSON 数据源
@@ -156,7 +156,7 @@ const buildMap = () => {
       data: malaysiaPlots as any,
     });
 
-// 点图层
+    // 点图层
     map.addLayer({
       id: 'plot-points',
       type: 'circle',
@@ -169,7 +169,7 @@ const buildMap = () => {
       },
     });
 
-// 鼠标悬停事件：显示 popup
+    // 鼠标悬停事件：显示 popup
     const popup = new maplibregl.Popup({
       closeButton: false,
       closeOnClick: false,
@@ -178,11 +178,11 @@ const buildMap = () => {
     map.on('mouseenter', 'plot-points', (e: any) => {
       map.getCanvas().style.cursor = 'pointer';
       const coordinates = e.features[0].geometry.coordinates.slice();
-      const {name, value} = e.features[0].properties;
+      const { name, value } = e.features[0].properties;
 
       popup.setLngLat(coordinates)
-          .setHTML(`<strong>${name}</strong><br/>${value}`)
-          .addTo(map);
+        .setHTML(`<strong>${name}</strong><br/>${value}`)
+        .addTo(map);
     });
 
     map.on('mouseleave', 'plot-points', () => {
@@ -201,6 +201,7 @@ const activeKey = ref('1');
 const dayValue = ref();
 const stackLineChart = ref<HTMLElement | null>(null);
 const renewablesLineChart = ref<HTMLElement | null>(null);
+// 负载图标
 const loadLineChart = ref<HTMLElement | null>(null);
 const zonalLoadLineChart = ref<HTMLElement | null>(null);
 const outagesChart = ref<HTMLElement | null>(null);
@@ -440,7 +441,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [0, 232, 101, 264, 90, 340, 250]
     },
     {
@@ -465,7 +466,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [120, 0, 111, 234, 220, 340, 310]
     },
     {
@@ -490,7 +491,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [320, 132, 201, 334, 190, 130, 220]
     },
     {
@@ -546,7 +547,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -575,7 +576,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -604,7 +605,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -633,7 +634,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -662,7 +663,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -691,7 +692,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
       data: [999, 302, 181, 234, 210, 290, 150]
     },
     {
@@ -720,7 +721,7 @@ const stackLineChartOption: echarts.EChartsOption = {
           }
         ])
       },
-      emphasis: {disabled: true},
+      emphasis: { disabled: true },
     },
   ]
 };
@@ -764,7 +765,7 @@ function fetchStackLineChart() {
       if (stackLineChartOption.series[index]) {
         stackLineChartOption.series[index].name = fuel; // 改 legend 名称
         stackLineChartOption.series[index].data = data.data.data.map(
-            (item: any) => item[fuel] ?? 0
+          (item: any) => item[fuel] ?? 0
         );
       }
     });
@@ -776,7 +777,7 @@ function fetchStackLineChart() {
 }
 
 
-function fetchLinesChart(option : String = "DPL") {
+function fetchLinesChart(option: string = "DPL") {
   const res = getLocationalMarginalPrice(start, end, "market", option);
   res.then(data => {
     const xAxisData = data.data.data.map(item => item.interval_start_local); // 横坐标用 local 时间
@@ -831,9 +832,242 @@ function fetchLinesChart(option : String = "DPL") {
   })
 }
 
+
+function fetchLoadData() {
+  getStandardized5MinData(start, end, "market").then(res => {
+    const records = res.data.data;
+
+    // 转换时间 & 数据
+    const loadData = records.map((item: any) => [
+      new Date(item.interval_start_local).getTime(),
+      item["load.load"]
+    ]);
+    const netLoadData = records.map((item: any) => [
+      new Date(item.interval_start_local).getTime(),
+      item.net_load
+    ]);
+    const forecastData = records.map((item: any) => [
+      new Date(item.interval_start_local).getTime(),
+      item["load_forecast.load_forecast"]
+    ]);
+
+    const loadLineChartOption: echarts.EChartsOption = {
+      title: {
+        text: "Load / Net Load / Forecast",
+        top: 1,
+        left: "center",
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: { type: "line" },
+      },
+      legend: {
+        bottom: 0,
+        data: ["Load", "Net Load", "Forecast"]
+      },
+      grid: {
+        left: "5%",
+        right: "5%",
+        bottom: "15%",
+        containLabel: true
+      },
+      xAxis: {
+        type: "time",
+        boundaryGap: false,
+        axisLabel: {
+          formatter: (value: number) => {
+            const d = new Date(value);
+            // 格式化成 "MM/DD HH:mm"
+            return d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" }) + " " +
+              d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+          }
+        },
+        splitNumber: 6,   // 平均分成 6 段（即 6 小时一个点）
+      },
+      yAxis: {
+        type: "value",
+        name: "MW"
+      },
+      series: [
+        {
+          name: "Load",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: loadData
+        },
+        {
+          name: "Net Load",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: netLoadData
+        },
+        {
+          name: "Forecast",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: forecastData
+        }
+      ]
+    };
+
+    renderChart(loadLineChart.value, loadLineChartOption);
+
+    const zones = [
+      "ae", "aep", "aps", "atsi", "bc", "comed", "dayton", "deok", "dom", "dpl",
+      "duq", "ekpc", "jc", "me", "pe", "pep", "pjm_mid_atlantic_region",
+      "pjm_rto", "pjm_southern_region", "pjm_western_region",
+      "pl", "pn", "ps", "reco", "ug"
+    ];
+
+    const zoneSeries = zones.map(zone => ({
+      name: zone.toUpperCase(),
+      type: "line",
+      smooth: true,
+      showSymbol: false,
+      connectNulls: true,   // 关键配置：跳过缺失点直接连线
+      data: records.map((item: any) => {
+        const val = item[`load.${zone}`];
+        return [
+          new Date(item.interval_start_local).getTime(),
+          val != null ? Number(val).toFixed(2) : null  // null 表示缺失，不画到0
+        ];
+      })
+    }));
+
+
+    const zonalLoadLineChartOption: echarts.EChartsOption = {
+      title: { text: "Zonal Load", left: "center" },
+      tooltip: {
+        trigger: "axis",
+        valueFormatter: (val: any) => Number(val).toFixed(2) + " MW",
+        appendToBody: true   // ✅ tooltip 直接挂到 body，不会被裁剪
+      },
+      legend: { type: "scroll", bottom: 0 },
+      grid: { left: "5%", right: "5%", bottom: "15%", containLabel: true },
+      xAxis: {
+        type: "time",
+        boundaryGap: false,
+        splitNumber: 6,
+        axisLabel: {
+          formatter: (value: number) => {
+            const d = new Date(value);
+            return d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" }) + " " +
+              d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+          }
+        }
+      },
+      yAxis: { type: "value", name: "MW", axisLabel: { formatter: (val: number) => val.toFixed(2) } },
+      series: zoneSeries
+    };
+
+    renderChart(zonalLoadLineChart.value, zonalLoadLineChartOption);
+
+    // ========== ③ Renewables ==========
+    // ========== ③ Renewables ==========
+    const renewablesData = records.map((item: any) => {
+      const v = Number(item["renewables"]);
+      return [
+        new Date(item.interval_start_local).getTime(),
+        v === 0 ? null : Number(v.toFixed(2))   // ✅ 0 -> null
+      ];
+    });
+
+    const ratioData = records.map((item: any) => {
+      const v = Number(item["renewables_to_load_ratio"]) * 100;
+      return [
+        new Date(item.interval_start_local).getTime(),
+        v === 0 ? null : Number(v.toFixed(2))   // ✅ 0 -> null
+      ];
+    });
+
+    const renewablesLineChartOption: echarts.EChartsOption = {
+      title: { text: "Renewables & Ratio", top: 1, left: "center" },
+      tooltip: {
+        trigger: "axis",
+        appendToBody: true,
+        formatter: (params: any) => {
+          let result = new Date(params[0].axisValue).toLocaleString() + "<br/>";
+          params.forEach((item: any) => {
+            if (item.data != null) { // ✅ 忽略 0/null
+              if (item.seriesName === "Ratio") {
+                result += item.marker + item.seriesName + ": " + item.data[1] + " %<br/>";
+              } else {
+                result += item.marker + item.seriesName + ": " + item.data[1] + " MW<br/>";
+              }
+            }
+          });
+          return result;
+        }
+      },
+      legend: { bottom: 0, data: ["Renewables", "Ratio"] },
+      grid: { left: "5%", right: "5%", bottom: "15%", containLabel: true },
+      xAxis: {
+        type: "time",
+        boundaryGap: false,
+        splitNumber: 6,
+        axisLabel: {
+          formatter: (value: number) => {
+            const d = new Date(value);
+            return (
+              d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" }) +
+              " " +
+              d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+            );
+          }
+        }
+      },
+      yAxis: [
+        {
+          type: "value",
+          name: "MW",
+          axisLabel: { formatter: (val: number) => val.toFixed(2) }
+        },
+        {
+          type: "value",
+          name: "%",
+          position: "right",
+          min: 0,   // ✅ 固定 0
+          max: 100, // ✅ 固定 100
+          axisLabel: { formatter: (val: number) => val.toFixed(2) + "%" }
+        }
+      ],
+      series: [
+        {
+          name: "Renewables",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          connectNulls: true,
+          yAxisIndex: 0,
+          data: renewablesData
+        },
+        {
+          name: "Ratio",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          connectNulls: true,
+          yAxisIndex: 1,
+          data: ratioData
+        }
+      ]
+    };
+    renderChart(renewablesLineChart.value, renewablesLineChartOption);
+
+
+  }).catch(err => {
+    console.error("fetchLoadData error:", err);
+  });
+}
+
+
+
 function formatTime(date: Date, timezone: string): string {
   if (timezone === "UTC") {
-    return date.toISOString(); // ✅ 直接输出 UTC 时间
+    return date.toISOString();
   }
 
   if (timezone === "market") {
@@ -884,17 +1118,24 @@ function fetchLinesTable(timezone: string = "UTC") {
 }
 onMounted(() => {
   buildMap();
-  // fetchStackLineChart(); // 立即调用
-  //
-  // setTimeout(() => {
-  //   fetchLinesChart(); // 1秒后调用
-  // }, 2000);
-  // renderChart(renewablesLineChart.value, lineChartOptions);
-  fetchLinesTable("market");
-  renderChart(loadLineChart.value, loadLineChartOption);
-  renderChart(zonalLoadLineChart.value, loadLineChartOption);
+
+  // 第一个立即执行
+  fetchStackLineChart();
+
+  // 第二个在 2 秒后执行
+  setTimeout(() => {
+    fetchLinesChart();
+    // 第三个在第二个执行完 2 秒后再执行
+    setTimeout(() => {
+      fetchLinesTable("market");
+      setTimeout(() => {
+        fetchLoadData();
+      }, 2000);
+    }, 2000);
+
+  }, 2000);
   renderChart(outagesChart.value, outagesOption);
-})
+});
 
 </script>
 
@@ -905,15 +1146,15 @@ onMounted(() => {
       <a-tabs v-model:activeKey="activeKey" size="large">
         <!-- 额外内容插槽（在 tab bar 右侧） -->
         <template #rightExtra>
-          <a-date-picker v-model:value="dayValue"/>
+          <a-date-picker v-model:value="dayValue" />
           <a-button @click="decrease" style="margin: 5px">
             <template #icon>
-              <CaretLeftOutlined/>
+              <CaretLeftOutlined />
             </template>
           </a-button>
           <a-button @click="increase">
             <template #icon>
-              <CaretRightOutlined/>
+              <CaretRightOutlined />
             </template>
           </a-button>
         </template>
@@ -999,16 +1240,10 @@ onMounted(() => {
                 <div ref="lineChart" class="chart-container" style="width: 98%; height: 400px;"></div>
                 <a-row style="margin-top: 10px">
                   <a-col :span="24">
-                    <a-select
-                        ref="select"
-                        v-model:value="lineChartOption"
-                        style="width: 98%"
-                        @focus="focus"
-                        @change="handleChange"
-                    >
+                    <a-select ref="select" v-model:value="lineChartOption" style="width: 98%" @focus="focus"
+                      @change="handleChange">
                       <template #suffixIcon>
-                        <
-                        <MonitorOutlined/>
+                        < <MonitorOutlined />
                       </template>
                       <a-select-option value="AECO">AECO</a-select-option>
                       <a-select-option value="AEP">AEP</a-select-option>
@@ -1056,45 +1291,38 @@ onMounted(() => {
                   <h3 style="display: flex; align-items: center; gap: 8px; margin: 0;">
                     5-Minute Real-Time LMP
                     <a-tooltip title="Refresh">
-                      <a-button
-                          type="text"
-                          size="small"
-                          @click="refresh"
-                      >
+                      <a-button type="text" size="small" @click="refresh">
                         <template #icon>
-                          <ReloadOutlined/>
+                          <ReloadOutlined />
                         </template>
                       </a-button>
                     </a-tooltip>
                   </h3>
                   <a-flex justify="space-between" align="center" style="width: 100%">
                     <label style="white-space: nowrap;">Interval End: 2025-08-27 12:45 PM EDT</label>
-                    <a-input
-                        v-model:value="inputValue"
-                        placeholder="Search location"
-                        allow-clear
-                        style="width: 200px"
-                    />
+                    <a-input v-model:value="inputValue" placeholder="Search location" allow-clear
+                      style="width: 200px" />
                   </a-flex>
-                  <a-table
-                      :columns="columns"
-                      :data-source="tableData"
-                      :pagination="false"
-                      :scroll="{ y: 300 }"
-                      class="custom-table"
-                  />
+                  <a-table :columns="columns" :data-source="tableData" :pagination="false" :scroll="{ y: 300 }"
+                    class="custom-table" />
 
                 </div>
 
               </a-col>
             </a-row>
 
+
+
+            <!-- 负载图表开始开始 -->
             <a-row style="margin-top: 20px">
               <a-col :span="12">
                 <div class="map-container" style="width: 98%;">
                   <div ref="loadLineChart" class="chart-container" style="width: 100%; height: 400px;"></div>
                 </div>
               </a-col>
+
+
+
               <a-col :span="12">
                 <div class="map-container">
                   <div ref="renewablesLineChart" class="chart-container" style="width: 98%; height: 400px;"></div>
@@ -1119,16 +1347,10 @@ onMounted(() => {
                   <div ref="outagesChart" class="chart-container" style="width: 100%;"></div>
                   <a-row style="margin-top: 10px; margin-bottom: 15px">
                     <a-col :span="24">
-                      <a-select
-                          ref="select"
-                          v-model:value="value1"
-                          style="width: 100%"
-                          @focus="focus"
-                          @change="handleChange"
-                      >
+                      <a-select ref="select" v-model:value="value1" style="width: 100%" @focus="focus"
+                        @change="handleChange">
                         <template #suffixIcon>
-                          <
-                          <MonitorOutlined/>
+                          < <MonitorOutlined />
                         </template>
                         <a-select-option value="AECO">AECO</a-select-option>
                         <a-select-option value="AEP">AEP</a-select-option>
@@ -1192,9 +1414,13 @@ onMounted(() => {
 .map-container {
   width: 100%;
   height: 100%;
-  border-radius: 8px; /* 圆角 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 阴影 */
-  overflow: hidden; /* 避免圆角外溢 */
+  border-radius: 8px;
+  /* 圆角 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* 阴影 */
+  /* overflow: hidden; */
+  overflow: visible !important;
+  /* 避免圆角外溢 */
 }
 
 .map-box {
@@ -1218,7 +1444,8 @@ onMounted(() => {
   height: 400px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  background: #fff; /* 给阴影对比度 */
+  background: #fff;
+  /* 给阴影对比度 */
   padding: 10px;
 }
 
@@ -1240,11 +1467,13 @@ onMounted(() => {
 }
 
 .map-legend.left {
-  left: 20px; /* 靠左 */
+  left: 20px;
+  /* 靠左 */
 }
 
 .map-legend.right {
-  right: 20px; /* 靠右（默认用这个） */
+  right: 20px;
+  /* 靠右（默认用这个） */
 }
 
 .legend-color {
@@ -1262,7 +1491,8 @@ onMounted(() => {
   height: 8px;
   margin-left: 6px;
   border-radius: 50%;
-  background-color: #52c41a; /* 绿色 */
+  background-color: #52c41a;
+  /* 绿色 */
   cursor: pointer;
 }
 
