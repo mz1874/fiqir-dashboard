@@ -745,8 +745,11 @@ const renderChart = (domRef: HTMLElement | null, option: echarts.EChartsOption) 
   instance.resize()
 }
 
-const start = new Date().toISOString().split("T")[0];  // 今天
-const end = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0]; // 明天
+// 昨天
+const start = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+// 今天
+const end = new Date().toISOString().split("T")[0];
+
 /**
  * 获取第一个堆叠图
  */
@@ -754,6 +757,7 @@ function fetchStackLineChart() {
 
   const res = getPJMFuelMixData(start, end, "market")
   res.then(data => {
+    console.log(data, "调用");
     // X 轴
     const xAxisData = data.data.data.map((item: any) => item.interval_start_local);
     // 对应 series 的能源字段
