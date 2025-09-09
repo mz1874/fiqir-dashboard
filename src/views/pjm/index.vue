@@ -4,10 +4,10 @@ import { CaretRightOutlined, CaretLeftOutlined, MonitorOutlined, ReloadOutlined 
 import * as echarts from 'echarts';
 import type { ECharts } from "echarts";
 import maplibregl from "maplibre-gl";
-import { getPJMFuelMixData, getLocationalMarginalPrice, getLocationalLMP, getStandardized5MinData } from "@/api/pjwApi";
+import { getPJMFuelMixData, getLocationalMarginalPrice, getLocationalLMP, getStandardized5MinData, getPJMDailyOutages } from "@/api/pjwApi";
 
 const lineChartOption = ref('DPL');
-
+const outagesChartValue = ref('Mid Atlantic - Dominion');
 const inputValue = ref();
 
 // 刷新表格数据
@@ -103,6 +103,9 @@ const malaysiaPlots = {
   ],
 };
 
+const handleChangeOutagesChart = (value: string) => {
+  fetchOutagesData(value);
+}
 
 const mapContainerId = 'geojson-detail'
 // 构建地图
@@ -780,6 +783,100 @@ function fetchStackLineChart() {
   })
 }
 
+function fetchOutagesData(filter_value: string) {
+  const start = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  const end = new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+
+  getPJMDailyOutages(start, end, "market", filter_value).then(res => {
+    const records = res.data.data;
+
+    // 每小时完整日期数组
+    const dates = records.map((item: any) => new Date(item.interval_start_local));
+
+    // X 轴每小时显示数据，但标签只显示每天一次
+    const xAxisData = dates.map(d =>
+      d.toLocaleString("en-US", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })
+    );
+
+    // series 数据
+    const plannedData = records.map((item: any) => item.planned_outages_mw);
+    const maintenanceData = records.map((item: any) => item.maintenance_outages_mw);
+    const forcedData = records.map((item: any) => item.forced_outages_mw);
+
+    // 未来阴影范围：从今天开始到数据最后一条
+    const today = new Date();
+    const futureStartIndex = dates.findIndex(d => d >= today);
+    const futureEndIndex = dates.length;
+
+    const outagesOption: echarts.EChartsOption = {
+      title: { text: 'Generation Outages: PJM' },
+      tooltip: { trigger: 'axis', axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985' } } },
+      legend: { data: ['Planned Outages', 'Maintenance Outages', 'Forced Outages'] },
+      toolbox: { feature: { saveAsImage: {} } },
+      grid: { left: '5%', right: '5%', top: '15%', bottom: '20%' },
+      xAxis: [
+        {
+          type: 'category',
+          boundaryGap: false,
+          data: xAxisData,
+          axisLabel: {
+            formatter: function (value: string, index: number) {
+              // 每天显示一次标签（小时为 0 的点）
+              const date = dates[index];
+              return date.getHours() === 0 ? `${date.getMonth() + 1}/${date.getDate()}` : '';
+            }
+          },
+          axisPointer: { type: 'shadow' }
+        }
+      ],
+      yAxis: [{ type: 'value', name: 'MW' }],
+      series: [
+        {
+          name: 'Planned Outages',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: { focus: 'series' },
+          data: plannedData,
+          // 使用 markArea 显示未来日期阴影
+          markArea: futureStartIndex >= 0 ? {
+            itemStyle: { color: 'rgba(150, 150, 150, 0.4)' },
+            data: [
+              [
+                { xAxis: xAxisData[futureStartIndex] },
+                { xAxis: xAxisData[futureEndIndex - 1] }
+              ]
+            ]
+          } : undefined
+        },
+        {
+          name: 'Maintenance Outages',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: { focus: 'series' },
+          data: maintenanceData
+        },
+        {
+          name: 'Forced Outages',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: { focus: 'series' },
+          data: forcedData
+        }
+      ],
+      dataZoom: []
+    };
+
+    // 渲染图表
+    renderChart(outagesChart.value, outagesOption);
+  }).catch(error => {
+    console.error("Error fetching outages data:", error);
+  });
+}
+
+
 
 function fetchLinesChart(option: string = "DPL") {
   const res = getLocationalMarginalPrice(start, end, "market", option);
@@ -1120,25 +1217,28 @@ function fetchLinesTable(timezone: string = "UTC") {
     console.error("Error fetching table data:", error);
   });
 }
-onMounted(() => {
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+onMounted(async () => {
   buildMap();
 
-  // 第一个立即执行
   fetchStackLineChart();
 
-  // 第二个在 2 秒后执行
-  setTimeout(() => {
-    fetchLinesChart();
-    // 第三个在第二个执行完 2 秒后再执行
-    setTimeout(() => {
-      fetchLinesTable("market");
-      setTimeout(() => {
-        fetchLoadData();
-      }, 2000);
-    }, 2000);
+  // 等待2秒
+  await delay(2000);
+  fetchLinesChart();
 
-  }, 2000);
-  renderChart(outagesChart.value, outagesOption);
+  // 再等待2秒
+  await delay(2000);
+  fetchLinesTable("market");
+
+  // 再等待2秒
+  await delay(2000);
+  fetchLoadData();
+
+  // 再等待2秒
+  await delay(2000);
+  fetchOutagesData(outagesChartValue.value);
 });
 
 </script>
@@ -1343,63 +1443,28 @@ onMounted(() => {
               </a-col>
             </a-row>
 
-
-            <a-row style="margin-top: 20px">
-              <a-col :span="24">
-                <div class="map-container" style="width: 100%;">
-                  <h1>Generation Outages: PJM</h1>
-                  <div ref="outagesChart" class="chart-container" style="width: 100%;"></div>
-                  <a-row style="margin-top: 10px; margin-bottom: 15px">
+            <a-row style="margin-top: 20px; height: 800px;">
+              <a-col :span="24" style="height: 100%;">
+                <div class="map-container" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                  <h1 style="flex: 0 0 auto;">Generation Outages: PJM</h1>
+                  <div ref="outagesChart" class="chart-container" style="width: 100%; flex: 1 1 auto;"></div>
+                  <a-row style="margin-top: 10px; margin-bottom: 15px; flex: 0 0 auto;">
                     <a-col :span="24">
-                      <a-select ref="select" v-model:value="value1" style="width: 100%" @focus="focus"
-                        @change="handleChange">
+                      <a-select ref="select" v-model:value="outagesChartValue" style="width: 100%" @focus="focus"
+                        @change="handleChangeOutagesChart">
                         <template #suffixIcon>
-                          < <MonitorOutlined />
+                          <MonitorOutlined />
                         </template>
-                        <a-select-option value="AECO">AECO</a-select-option>
-                        <a-select-option value="AEP">AEP</a-select-option>
-                        <a-select-option value="AEP-DAYTON HUB">AEP-DAYTON HUB</a-select-option>
-                        <a-select-option value="AEP GEN HUB">AEP GEN HUB</a-select-option>
-                        <a-select-option value="APS">APS</a-select-option>
-                        <a-select-option value="ATSI">ATSI</a-select-option>
-                        <a-select-option value="ATSI GEN HUB">ATSI GEN HUB</a-select-option>
-                        <a-select-option value="BGE">BGE</a-select-option>
-                        <a-select-option value="CHICAGO GEN HUB">CHICAGO GEN HUB</a-select-option>
-                        <a-select-option value="CHICAGO HUB">CHICAGO HUB</a-select-option>
-                        <a-select-option value="COMED">COMED</a-select-option>
-                        <a-select-option value="DAY">DAY</a-select-option>
-                        <a-select-option value="DEOK">DEOK</a-select-option>
-                        <a-select-option value="DOM">DOM</a-select-option>
-                        <a-select-option value="DOMINION HUB">DOMINION HUB</a-select-option>
-                        <a-select-option value="DPL">DPL</a-select-option>
-                        <a-select-option value="DUQ">DUQ</a-select-option>
-                        <a-select-option value="EASTERN HUB">EASTERN HUB</a-select-option>
-                        <a-select-option value="EKPC">EKPC</a-select-option>
-                        <a-select-option value="JCPL">JCPL</a-select-option>
-                        <a-select-option value="METED">METED</a-select-option>
-                        <a-select-option value="NEW JERSEY HUB">NEW JERSEY HUB</a-select-option>
-                        <a-select-option value="N ILLINOIS HUB">N ILLINOIS HUB</a-select-option>
-                        <a-select-option value="OHIO HUB">OHIO HUB</a-select-option>
-                        <a-select-option value="OVEC">OVEC</a-select-option>
-                        <a-select-option value="PECO">PECO</a-select-option>
-                        <a-select-option value="PENELEC">PENELEC</a-select-option>
-                        <a-select-option value="PEPCO">PEPCO</a-select-option>
-                        <a-select-option value="PJM-RTO">PJM-RTO</a-select-option>
-                        <a-select-option value="PPL">PPL</a-select-option>
-                        <a-select-option value="PSEG">PSEG</a-select-option>
-                        <a-select-option value="RECO">RECO</a-select-option>
-                        <a-select-option value="WESTERN HUB">WESTERN HUB</a-select-option>
-                        <a-select-option value="WEST INT HUB">WEST INT HUB</a-select-option>
-                        <a-select-option value="NYIS">NYIS</a-select-option>
-                        <a-select-option value="MISO">MISO</a-select-option>
-                        <a-select-option value="ONTARIO">ONTARIO</a-select-option>
+                        <a-select-option value="Mid Atlantic - Dominion">Mid Atlantic - Dominion</a-select-option>
+                        <a-select-option value="PJM RTO">PJM RTO</a-select-option>
+                        <a-select-option value="Western">Western</a-select-option>
                       </a-select>
                     </a-col>
                   </a-row>
                 </div>
-
               </a-col>
             </a-row>
+
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="Fuel Mix" force-render>

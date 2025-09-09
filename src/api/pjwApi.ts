@@ -55,3 +55,19 @@ export function getStandardized5MinData(start: string, end: string, timezone: st
         },
     });
 }
+
+
+export function getPJMDailyOutages(start: string, end: string, timezone: string, filter_value: string) {
+    return axios.get("https://api.gridstatus.io/v1/datasets/pjm_outages_daily/query", {
+        params: {
+            start_time: start,
+            end_time: end,
+            publish_time: "latest",
+            timezone: timezone,
+            api_key: API_KEY,
+            filter_column: "region",
+            resample_frequency: "1_HOUR",
+            filter_value: filter_value
+        },
+    });
+}
